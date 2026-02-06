@@ -1103,3 +1103,34 @@ tbody tr:hover {
         color: #555;
     }
 }
+
+/* Delete Button Modern Styling */
+.delete-btn {
+    background-color: #ff4d4d; /* लाल रंग */
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(255, 77, 77, 0.2);
+}
+
+/* माऊस नेल्यावर होणारा बदल */
+.delete-btn:hover {
+    background-color: #e60000; /* थोडा गडद लाल */
+    transform: translateY(-1px); /* थोडं वर उचललं जाईल */
+    box-shadow: 0 4px 8px rgba(230, 0, 0, 0.3);
+}
+
+/* क्लिक केल्यावर होणारा बदल */
+.delete-btn:active {
+    transform: translateY(0);
+}
+
+/* टेबलमधील डेटा मधोमध दिसण्यासाठी (Optional) */
+td {
+    vertical-align: middle;
+}

@@ -349,17 +349,22 @@ function clearInputs() {
 // COURSE JS (Vercel Ready)
 // ============================
 
-const COURSE_API = `${BASE_URL}/api/courses`;
-let editingCourseId = null;
+// ============================
+// COURSE1 JS (Vercel Ready)
+// ============================
+
+// API endpoint URL change kela aahe ( खात्री करा की तुमची backend API पण /api/courses1 ला support करते)
+const COURSE1_API = `${BASE_URL}/api/courses1`; 
+let editingCourse1Id = null;
 
 // ===============================
-// 1. DATA LOAD KARNE
+// 1. DATA LOAD KARNE (courses1)
 // ===============================
-async function loadCourses() {
+async function loadCourses1() {
     try {
-        const res = await fetch(COURSE_API);
+        const res = await fetch(COURSE1_API);
         const courses = await res.json();
-        const table = document.getElementById("coursesTable");
+        const table = document.getElementById("coursesTable1"); // Table ID badalala aahe
         
         if (!table) return;
         table.innerHTML = "";
@@ -373,39 +378,40 @@ async function loadCourses() {
             const row = document.createElement("tr");
             row.dataset.id = course.id;
             row.innerHTML = `
-                <td class="course-duration">${course.duration}</td>
-                <td class="course-startdate">${course.start_date}</td>
+                <td class="course-duration1">${course.duration1}</td>
+                <td class="course-startdate1">${course.start_date1}</td>
                 <td>
-                    <button class="action-btn edit" onclick="editCourse(this)" style="background:#ffc107; border:none; padding:5px 10px; cursor:pointer; border-radius:4px;">Edit</button>
-                    <button class="action-btn delete" onclick="deleteCourse('${course.id}')" style="background:#dc3545; color:#fff; border:none; padding:5px 10px; cursor:pointer; border-radius:4px;">Delete</button>
+                    <button class="action-btn edit" onclick="editCourse1(this)" style="background:#ffc107; border:none; padding:5px 10px; cursor:pointer; border-radius:4px;">Edit</button>
+                    <button class="action-btn delete" onclick="deleteCourse1('${course.id}')" style="background:#dc3545; color:#fff; border:none; padding:5px 10px; cursor:pointer; border-radius:4px;">Delete</button>
                 </td>
             `;
             table.appendChild(row);
         });
     } catch (err) {
-        console.error("Course load error:", err);
+        console.error("Course1 load error:", err);
     }
 }
 
 // ===============================
 // 2. DATA ADD KIWA UPDATE KARNE
 // ===============================
-async function addCourse() {
-    const durationInput = document.getElementById("courseDuration");
-    const startDateInput = document.getElementById("courseStartDate");
+async function addCourse1() {
+    const durationInput = document.getElementById("courseDuration1");
+    const startDateInput = document.getElementById("courseStartDate1");
     
-    // HTML class badalnyachi garaj nahi, querySelector vaprun button sho dhuya
-    const submitBtn = document.querySelector("#courses .form button");
+    // Tumcha button selector (Check kara ki HTML madhe ha path barobar aahe ka)
+    const submitBtn = document.querySelector("#courses1 .form button");
 
-    const duration = durationInput.value.trim();
-    const start_date = startDateInput.value;
+    const duration1 = durationInput.value.trim();
+    const start_date1 = startDateInput.value;
 
-    if (!duration || !start_date) {
+    if (!duration1 || !start_date1) {
         alert("Krupaya sarva mahiti bhara!");
         return;
     }
 
-    const payload = { duration, start_date };
+    // Payload madhe table column names pramane keys ghetlya aahet
+    const payload = { duration1, start_date1 };
 
     try {
         if (submitBtn) {
@@ -414,16 +420,16 @@ async function addCourse() {
         }
 
         let response;
-        if (editingCourseId) {
+        if (editingCourse1Id) {
             // UPDATE
-            response = await fetch(`${COURSE_API}/${editingCourseId}`, {
+            response = await fetch(`${COURSE11_API}/${editingCourse1Id}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload)
             });
         } else {
             // ADD NEW
-            response = await fetch(COURSE_API, {
+            response = await fetch(COURSE1_API, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload)
@@ -431,15 +437,15 @@ async function addCourse() {
         }
 
         if (response.ok) {
-            alert(editingCourseId ? "Course Updated!" : "Course Added to Supabase!");
+            alert(editingCourse1Id ? "Course Updated!" : "Course Added to Supabase!");
             
             // Reset Form
             durationInput.value = "";
             startDateInput.value = "";
-            editingCourseId = null;
+            editingCourse1Id = null;
             if (submitBtn) submitBtn.innerText = "Add Course";
             
-            loadCourses(); 
+            loadCourses1(); 
         } else {
             const errorMsg = await response.json();
             alert("Error: " + (errorMsg.error || "Failed to save"));
@@ -455,27 +461,27 @@ async function addCourse() {
 // ===============================
 // 3. EDIT SATHI FORM BHARNE
 // ===============================
-function editCourse(btn) {
+function editCourse1(btn) {
     const row = btn.closest("tr");
-    editingCourseId = row.dataset.id;
+    editingCourse1Id = row.dataset.id;
     
-    document.getElementById("courseDuration").value = row.querySelector(".course-duration").innerText;
-    document.getElementById("courseStartDate").value = row.querySelector(".course-startdate").innerText;
+    document.getElementById("courseDuration1").value = row.querySelector(".course-duration1").innerText;
+    document.getElementById("courseStartDate1").value = row.querySelector(".course-startdate1").innerText;
     
-    const submitBtn = document.querySelector("#courses .form button");
+    const submitBtn = document.querySelector("#courses1 .form button");
     if (submitBtn) submitBtn.innerText = "Update Course";
 }
 
 // ===============================
 // 4. DATA DELETE KARNE
 // ===============================
-async function deleteCourse(id) {
+async function deleteCourse1(id) {
     if (!confirm("Haa course delete karaycha ka?")) return;
     
     try {
-        const res = await fetch(`${COURSE_API}/${id}`, { method: "DELETE" });
+        const res = await fetch(`${COURSE1_API}/${id}`, { method: "DELETE" });
         if (res.ok) {
-            loadCourses();
+            loadCourses1();
         } else {
             alert("Delete failed.");
         }
@@ -484,7 +490,7 @@ async function deleteCourse(id) {
     }
 }
 
-document.addEventListener("DOMContentLoaded", loadCourses);
+document.addEventListener("DOMContentLoaded", loadCourses1);
 
 
 // ===============================

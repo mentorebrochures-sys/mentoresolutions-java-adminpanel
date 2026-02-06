@@ -917,13 +917,14 @@ certificate section
 ========================= */
 
 /* Certificate Section Styling */
+/* Main Container Styling */
 #certificate {
     background: #ffffff;
     padding: 2rem;
     border-radius: 12px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     margin-bottom: 2rem;
-    transition: transform 0.3s ease;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 #certificate h2 {
@@ -934,7 +935,7 @@ certificate section
     padding-left: 15px;
 }
 
-/* Form Styling */
+/* Form Section Styling */
 #certificate .form {
     display: flex;
     gap: 15px;
@@ -947,7 +948,7 @@ certificate section
     border: 1px dashed #ccc;
 }
 
-/* Custom File Input Styling */
+/* Custom File Input */
 #certImage {
     flex: 1;
     min-width: 250px;
@@ -958,7 +959,7 @@ certificate section
     cursor: pointer;
 }
 
-/* Button Styling with Animation */
+/* Save Certificate Button */
 #addCertBtn {
     padding: 12px 25px;
     background: linear-gradient(135deg, #ff9800, #f57c00);
@@ -988,10 +989,11 @@ table {
     margin-top: 10px;
     overflow: hidden;
     border-radius: 8px;
+    background: #fff;
 }
 
 thead {
-    background-color: #000;
+    background-color: #222;
     color: #fff;
 }
 
@@ -1001,15 +1003,11 @@ th, td {
     border-bottom: 1px solid #eee;
 }
 
-tbody tr {
-    transition: background 0.2s ease;
-}
-
 tbody tr:hover {
     background-color: #fff9f0;
 }
 
-/* Image Preview in Table */
+/* Image Preview Styling */
 #certificateTable img {
     width: 80px;
     height: 60px;
@@ -1021,28 +1019,39 @@ tbody tr:hover {
 }
 
 #certificateTable img:hover {
-    transform: scale(2.5);
+    transform: scale(2.0);
     position: relative;
     z-index: 10;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
 }
 
-/* Delete Button in Table */
+/* Delete Button Specific CSS */
 .delete-btn {
-    background: #ff4d4d;
+    background-color: #ff4d4d;
     color: white;
     border: none;
-    padding: 8px 15px;
-    border-radius: 4px;
+    padding: 8px 16px;
+    border-radius: 5px;
     cursor: pointer;
-    font-size: 0.9rem;
-    transition: background 0.3s;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .delete-btn:hover {
-    background: #cc0000;
+    background-color: #e60000;
+    box-shadow: 0 2px 8px rgba(255, 77, 77, 0.4);
+    transform: scale(1.05);
 }
 
-/* Fully Responsive Design */
+.delete-btn:active {
+    transform: scale(0.95);
+}
+
+/* Responsive Design for Mobile */
 @media (max-width: 768px) {
     #certificate .form {
         flex-direction: column;
@@ -1057,8 +1066,8 @@ tbody tr:hover {
         display: block;
     }
 
-    thead tr {
-        display: none;
+    thead {
+        display: none; /* Hide header on mobile */
     }
 
     tr {
@@ -1066,20 +1075,31 @@ tbody tr:hover {
         border: 1px solid #ddd;
         border-radius: 8px;
         padding: 10px;
+        background: #fff;
     }
 
     td {
         text-align: right;
         padding-left: 50%;
         position: relative;
+        min-height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        border-bottom: 1px solid #f1f1f1;
+    }
+
+    td:last-child {
+        border-bottom: none;
     }
 
     td::before {
-        content: attr(data-label);
+        content: attr(data-label); /* Important: requires data-label in HTML */
         position: absolute;
         left: 10px;
         width: 45%;
         font-weight: bold;
         text-align: left;
+        color: #555;
     }
 }

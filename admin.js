@@ -373,9 +373,7 @@ async function loadCourses() {
             const row = document.createElement("tr");
             row.dataset.id = course.id;
             row.innerHTML = `
-                <td class="course-duration">${course.duration}</td>
-                <td class="course-startdate">${course.start_date}</td>
-                <td>
+                <td class="course-duration">${course.duration1}</td>  <td class="course-startdate">${course.start_date1}</td> <td>
                     <button class="action-btn edit" onclick="editCourse(this)" style="background:#ffc107; border:none; padding:5px 10px; cursor:pointer; border-radius:4px;">Edit</button>
                     <button class="action-btn delete" onclick="deleteCourse('${course.id}')" style="background:#dc3545; color:#fff; border:none; padding:5px 10px; cursor:pointer; border-radius:4px;">Delete</button>
                 </td>
@@ -394,18 +392,18 @@ async function addCourse() {
     const durationInput = document.getElementById("courseDuration");
     const startDateInput = document.getElementById("courseStartDate");
     
-    // HTML class badalnyachi garaj nahi, querySelector vaprun button sho dhuya
     const submitBtn = document.querySelector("#courses .form button");
 
-    const duration = durationInput.value.trim();
-    const start_date = startDateInput.value;
+    const duration1 = durationInput.value.trim(); // Key name updated
+    const start_date1 = startDateInput.value;     // Key name updated
 
-    if (!duration || !start_date) {
+    if (!duration1 || !start_date1) {
         alert("Krupaya sarva mahiti bhara!");
         return;
     }
 
-    const payload = { duration, start_date };
+    // Database fields pramane payload banavla aahe
+    const payload = { duration1, start_date1 };
 
     try {
         if (submitBtn) {
@@ -431,7 +429,7 @@ async function addCourse() {
         }
 
         if (response.ok) {
-            alert(editingCourseId ? "Course Updated!" : "Course Added to Supabase!");
+            alert(editingCourseId ? "Course Updated!" : "Course Added Successfully!");
             
             // Reset Form
             durationInput.value = "";
@@ -459,6 +457,7 @@ function editCourse(btn) {
     const row = btn.closest("tr");
     editingCourseId = row.dataset.id;
     
+    // UI madhle class names tasech thevle aahet pan data navin column madhun yeto aahe
     document.getElementById("courseDuration").value = row.querySelector(".course-duration").innerText;
     document.getElementById("courseStartDate").value = row.querySelector(".course-startdate").innerText;
     

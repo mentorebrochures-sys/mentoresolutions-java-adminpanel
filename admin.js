@@ -71,16 +71,13 @@ function addRow(tableId, inputIds) {
     editingRow = null;
   } else {
     const row = table.insertRow();
-    // तुमच्या JS मधली ही ओळ अशी बदलून घ्या:
-    // जुन्या ओळीच्या जागी ही ओळ टाका
     row.innerHTML = `
-    <td>
-        <img src="${cert.image}" alt="Certificate">
-    </td>
-    <td>
-        <button type="button" class="delete-btn" onclick="deleteCert(${cert.id})">Delete</button>
-    </td>
-`;
+      ${values.map((v) => `<td>${v}</td>`).join("")}
+      <td>
+        <button class="action-btn edit" onclick="editRow(this)">Edit</button>
+        <button class="action-btn delete" onclick="deleteRow(this)">Delete</button>
+      </td>
+    `;
   }
   inputIds.forEach((id) => (document.getElementById(id).value = ""));
 }
@@ -124,14 +121,15 @@ function editRow(btn) {
           const row = document.createElement("tr");
 
           // HTML structure madhe badal na karta fakt data insert karne
+          // admin.js मधील ही ओळ बदला
           row.innerHTML = `
-                        <td>
-                            <img src="${cert.image}" alt="Certificate" style="width: 100px; height: auto; border-radius: 4px;">
-                        </td>
-                        <td>
-                            <button type="button" onclick="deleteCert(${cert.id})">Delete</button>
-                        </td>
-                    `;
+    <td data-label="Certificate Image">
+        <img src="${cert.image}" alt="Certificate">
+    </td>
+    <td data-label="Action">
+        <button type="button" class="delete-btn" onclick="deleteCert(${cert.id})">Delete</button>
+    </td>
+`;
           certificateTable.appendChild(row);
         });
       } catch (err) {
@@ -377,7 +375,9 @@ async function loadCourses() {
       const row = document.createElement("tr");
       row.dataset.id = course.id;
       row.innerHTML = `
-                <td class="course-duration">${course.duration1}</td>  <td class="course-startdate">${course.start_date1}</td> <td>
+                <td class="course-duration">${course.duration}</td>
+                <td class="course-startdate">${course.start_date}</td>
+                <td>
                     <button class="action-btn edit" onclick="editCourse(this)" style="background:#ffc107; border:none; padding:5px 10px; cursor:pointer; border-radius:4px;">Edit</button>
                     <button class="action-btn delete" onclick="deleteCourse('${course.id}')" style="background:#dc3545; color:#fff; border:none; padding:5px 10px; cursor:pointer; border-radius:4px;">Delete</button>
                 </td>
@@ -396,18 +396,18 @@ async function addCourse() {
   const durationInput = document.getElementById("courseDuration");
   const startDateInput = document.getElementById("courseStartDate");
 
+  // HTML class badalnyachi garaj nahi, querySelector vaprun button sho dhuya
   const submitBtn = document.querySelector("#courses .form button");
 
-  const duration1 = durationInput.value.trim();
-  const start_date1 = startDateInput.value;
+  const duration = durationInput.value.trim();
+  const start_date = startDateInput.value;
 
-  if (!duration1 || !start_date1) {
+  if (!duration || !start_date) {
     alert("Krupaya sarva mahiti bhara!");
     return;
   }
 
-  // Payload keys updated to match your database columns
-  const payload = { duration1, start_date1 };
+  const payload = { duration, start_date };
 
   try {
     if (submitBtn) {
@@ -433,9 +433,7 @@ async function addCourse() {
     }
 
     if (response.ok) {
-      alert(
-        editingCourseId ? "Course Updated!" : "Course Added to courses1 table!",
-      );
+      alert(editingCourseId ? "Course Updated!" : "Course Added to Supabase!");
 
       // Reset Form
       durationInput.value = "";
@@ -463,7 +461,6 @@ function editCourse(btn) {
   const row = btn.closest("tr");
   editingCourseId = row.dataset.id;
 
-  // UI IDs are same, but we read from the updated column cells
   document.getElementById("courseDuration").value =
     row.querySelector(".course-duration").innerText;
   document.getElementById("courseStartDate").value =

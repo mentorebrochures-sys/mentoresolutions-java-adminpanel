@@ -346,7 +346,7 @@ function clearInputs() {
 }
 
 // ============================
-// COURSE JS (Vercel Ready)
+// COURSE JS (Vercel Ready) - UPDATED FOR courses1
 // ============================
 
 const COURSE_API = `${BASE_URL}/api/courses`;
@@ -372,9 +372,10 @@ async function loadCourses() {
         courses.forEach(course => {
             const row = document.createElement("tr");
             row.dataset.id = course.id;
+            // बदलाची जागा: course.duration -> course.duration1 आणि start_date -> start_date1
             row.innerHTML = `
-                <td class="course-duration">${course.duration}</td>
-                <td class="course-startdate">${course.start_date}</td>
+                <td class="course-duration">${course.duration1}</td>
+                <td class="course-startdate">${course.start_date1}</td>
                 <td>
                     <button class="action-btn edit" onclick="editCourse(this)" style="background:#ffc107; border:none; padding:5px 10px; cursor:pointer; border-radius:4px;">Edit</button>
                     <button class="action-btn delete" onclick="deleteCourse('${course.id}')" style="background:#dc3545; color:#fff; border:none; padding:5px 10px; cursor:pointer; border-radius:4px;">Delete</button>
@@ -393,19 +394,18 @@ async function loadCourses() {
 async function addCourse() {
     const durationInput = document.getElementById("courseDuration");
     const startDateInput = document.getElementById("courseStartDate");
-    
-    // HTML class badalnyachi garaj nahi, querySelector vaprun button sho dhuya
     const submitBtn = document.querySelector("#courses .form button");
 
-    const duration = durationInput.value.trim();
-    const start_date = startDateInput.value;
+    const duration1 = durationInput.value.trim();
+    const start_date1 = startDateInput.value;
 
-    if (!duration || !start_date) {
+    if (!duration1 || !start_date1) {
         alert("Krupaya sarva mahiti bhara!");
         return;
     }
 
-    const payload = { duration, start_date };
+    // बदलाची जागा: Payload मध्ये नवीन कॉलम नावे वापरली आहेत
+    const payload = { duration1, start_date1 };
 
     try {
         if (submitBtn) {
@@ -459,6 +459,7 @@ function editCourse(btn) {
     const row = btn.closest("tr");
     editingCourseId = row.dataset.id;
     
+    // टेबल मधून डेटा पुन्हा फॉर्ममध्ये भरताना
     document.getElementById("courseDuration").value = row.querySelector(".course-duration").innerText;
     document.getElementById("courseStartDate").value = row.querySelector(".course-startdate").innerText;
     

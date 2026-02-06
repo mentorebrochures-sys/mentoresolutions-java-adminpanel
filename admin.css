@@ -1025,33 +1025,30 @@ tbody tr:hover {
     box-shadow: 0 5px 15px rgba(0,0,0,0.2);
 }
 
-/* Delete Button ला एकदम भारी लूक देण्यासाठी */
-#certificateTable .delete-btn {
-    background-color: #eb4d4b !important; /* लाल रंग */
-    color: #ffffff !important;
-    border: none !important;
-    padding: 8px 20px !important;
-    border-radius: 5px !important;
-    font-size: 14px !important;
-    font-weight: bold !important;
-    cursor: pointer !important;
-    transition: all 0.3s ease !important;
-    display: inline-block !important;
-    text-transform: uppercase !important;
-    letter-spacing: 1px !important;
+/* Delete Button Modern Styling */
+.delete-btn {
+    background-color: #ff4d4d; /* लाल रंग */
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(255, 77, 77, 0.2);
 }
 
-/* माऊस बटणावर नेल्यावर काय व्हावे */
-#certificateTable .delete-btn:hover {
-    background-color: #ff0000 !important;
-    box-shadow: 0 4px 12px rgba(235, 77, 75, 0.4) !important;
-    transform: scale(1.05) !important;
+/* माऊस नेल्यावर होणारा बदल */
+.delete-btn:hover {
+    background-color: #e60000; /* थोडा गडद लाल */
+    transform: translateY(-1px); /* थोडं वर उचललं जाईल */
+    box-shadow: 0 4px 8px rgba(230, 0, 0, 0.3);
 }
 
-/* टेबलमधील सेल सेंटरला येण्यासाठी */
-#certificateTable td {
-    vertical-align: middle;
-    text-align: center;
+/* क्लिक केल्यावर होणारा बदल */
+.delete-btn:active {
+    transform: translateY(0);
 }
 
 /* Responsive Design for Mobile */

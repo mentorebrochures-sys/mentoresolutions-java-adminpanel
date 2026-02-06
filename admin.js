@@ -394,15 +394,15 @@ async function addCourse() {
     
     const submitBtn = document.querySelector("#courses .form button");
 
-    const duration1 = durationInput.value.trim(); // Key name updated
-    const start_date1 = startDateInput.value;     // Key name updated
+    const duration1 = durationInput.value.trim();
+    const start_date1 = startDateInput.value;
 
     if (!duration1 || !start_date1) {
         alert("Krupaya sarva mahiti bhara!");
         return;
     }
 
-    // Database fields pramane payload banavla aahe
+    // Payload keys updated to match your database columns
     const payload = { duration1, start_date1 };
 
     try {
@@ -429,7 +429,7 @@ async function addCourse() {
         }
 
         if (response.ok) {
-            alert(editingCourseId ? "Course Updated!" : "Course Added Successfully!");
+            alert(editingCourseId ? "Course Updated!" : "Course Added to courses1 table!");
             
             // Reset Form
             durationInput.value = "";
@@ -457,7 +457,7 @@ function editCourse(btn) {
     const row = btn.closest("tr");
     editingCourseId = row.dataset.id;
     
-    // UI madhle class names tasech thevle aahet pan data navin column madhun yeto aahe
+    // UI IDs are same, but we read from the updated column cells
     document.getElementById("courseDuration").value = row.querySelector(".course-duration").innerText;
     document.getElementById("courseStartDate").value = row.querySelector(".course-startdate").innerText;
     

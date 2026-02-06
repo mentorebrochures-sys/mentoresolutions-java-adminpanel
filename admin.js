@@ -72,14 +72,13 @@ function addRow(tableId, inputIds) {
   } else {
     const row = table.insertRow();
     // तुमच्या JS मधली ही ओळ अशी बदलून घ्या:
+    // जुन्या ओळीच्या जागी ही ओळ टाका
     row.innerHTML = `
-    <td data-label="Certificate Image">
+    <td>
         <img src="${cert.image}" alt="Certificate">
     </td>
-    <td data-label="Action">
-        <button type="button" class="delete-btn" onclick="deleteCert(${cert.id})">
-            <i class="fas fa-trash"></i> Delete
-        </button>
+    <td>
+        <button type="button" class="delete-btn" onclick="deleteCert(${cert.id})">Delete</button>
     </td>
 `;
   }

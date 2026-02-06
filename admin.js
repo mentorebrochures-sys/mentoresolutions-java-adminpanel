@@ -39,16 +39,16 @@ function showPanel(id, el) {
   // 🔒 active section save (IMPORTANT)
   localStorage.setItem("activePanel", id);
   // hide all panels
-  document.querySelectorAll(".panel").forEach((panel) => {
+  document.querySelectorAll(".panel").forEach(panel => {
     panel.classList.remove("show");
   });
   // show selected panel
   const activePanel = document.getElementById(id);
   if (activePanel) activePanel.classList.add("show");
   // sidebar active state
-  document
-    .querySelectorAll(".sidebar li")
-    .forEach((li) => li.classList.remove("active"));
+  document.querySelectorAll(".sidebar li").forEach(li =>
+    li.classList.remove("active")
+  );
   if (el) el.classList.add("active");
   // mobile sidebar close
   if (window.innerWidth <= 768) {
@@ -60,26 +60,26 @@ function showPanel(id, el) {
    ADD / UPDATE ROW
 ================================ */
 function addRow(tableId, inputIds) {
-  const values = inputIds.map((id) => document.getElementById(id).value.trim());
-  if (values.some((v) => v === "")) {
+  const values = inputIds.map(id => document.getElementById(id).value.trim());
+  if (values.some(v => v === "")) {
     alert("Please fill all fields");
     return;
   }
   const table = document.getElementById(tableId);
   if (editingRow) {
-    values.forEach((val, i) => (editingRow.cells[i].innerText = val));
+    values.forEach((val, i) => editingRow.cells[i].innerText = val);
     editingRow = null;
   } else {
     const row = table.insertRow();
     row.innerHTML = `
-      ${values.map((v) => `<td>${v}</td>`).join("")}
+      ${values.map(v => `<td>${v}</td>`).join("")}
       <td>
         <button class="action-btn edit" onclick="editRow(this)">Edit</button>
         <button class="action-btn delete" onclick="deleteRow(this)">Delete</button>
       </td>
     `;
   }
-  inputIds.forEach((id) => (document.getElementById(id).value = ""));
+  inputIds.forEach(id => document.getElementById(id).value = "");
 }
 /* ===============================
    EDIT ROW
@@ -89,7 +89,7 @@ function editRow(btn) {
   const inputs = document.querySelectorAll(".panel.show input");
   [...editingRow.cells]
     .slice(0, inputs.length)
-    .forEach((cell, i) => (inputs[i].value = cell.innerText));
+    .forEach((cell, i) => inputs[i].value = cell.innerText);
 }
 
 // ===============================
@@ -97,138 +97,138 @@ function editRow(btn) {
 // ===============================
 
 (() => {
-  // BASE_URL define kela asava (e.g., const BASE_URL = "http://localhost:5000")
-  const API_URL = `${BASE_URL}/api/certificates`;
+    // BASE_URL define kela asava (e.g., const BASE_URL = "http://localhost:5000")
+    const API_URL = `${BASE_URL}/api/certificates`;
 
-  document.addEventListener("DOMContentLoaded", () => {
-    const addBtn = document.getElementById("addCertBtn");
-    const imageInput = document.getElementById("certImage");
-    const certificateTable = document.getElementById("certificateTable");
+    document.addEventListener("DOMContentLoaded", () => {
+        const addBtn = document.getElementById("addCertBtn");
+        const imageInput = document.getElementById("certImage");
+        const certificateTable = document.getElementById("certificateTable");
 
-    if (!addBtn) return;
+        if (!addBtn) return;
 
-    // --- 1. DISPLAY LOGIC ---
-    async function loadCertificates() {
-      try {
-        const res = await fetch(API_URL);
-        const data = await res.json();
+        // --- 1. DISPLAY LOGIC ---
+        async function loadCertificates() {
+            try {
+                const res = await fetch(API_URL);
+                const data = await res.json();
 
-        if (!Array.isArray(data)) return;
+                if (!Array.isArray(data)) return;
 
-        certificateTable.innerHTML = "";
+                certificateTable.innerHTML = ""; 
 
-        data.forEach((cert) => {
-          const row = document.createElement("tr");
-
-          // HTML structure madhe badal na karta fakt data insert karne
-          // admin.js मधील ही ओळ बदला
-          row.innerHTML = `
-    <td data-label="Certificate Image">
-        <img src="${cert.image}" alt="Certificate">
-    </td>
-    <td data-label="Action">
-        <button type="button" class="delete-btn" onclick="deleteCert(${cert.id})">Delete</button>
-    </td>
-`;
-          certificateTable.appendChild(row);
-        });
-      } catch (err) {
-        console.error("Data load karnyaat adthala:", err);
-      }
-    }
-
-    // --- 2. DELETE LOGIC ---
-    // Global function banavli aahe jya mule HTML madhun 'onclick' kaam karel
-    window.deleteCert = async (id) => {
-      if (!confirm("Khatri aahe? Certificate kaamche nighun jail!")) return;
-
-      try {
-        const res = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
-        if (res.ok) {
-          loadCertificates();
-        } else {
-          const errorData = await res.json();
-          alert("Delete karta aale nahi: " + errorData.error);
+                data.forEach(cert => {
+                    const row = document.createElement("tr");
+                    
+                    // HTML structure madhe badal na karta fakt data insert karne
+                    row.innerHTML = `
+                        <td>
+                            <img src="${cert.image}" alt="Certificate" style="width: 100px; height: auto; border-radius: 4px;">
+                        </td>
+                        <td>
+                            <button type="button" onclick="deleteCert(${cert.id})">Delete</button>
+                        </td>
+                    `;
+                    certificateTable.appendChild(row);
+                });
+            } catch (err) {
+                console.error("Data load karnyaat adthala:", err);
+            }
         }
-      } catch (err) {
-        console.error("Delete error:", err);
-        alert("Server error mule delete jhale nahi.");
-      }
-    };
 
-    // --- 3. CREATE LOGIC ---
-    addBtn.onclick = async (e) => {
-      e.preventDefault();
-      const file = imageInput.files[0];
+        // --- 2. DELETE LOGIC ---
+        // Global function banavli aahe jya mule HTML madhun 'onclick' kaam karel
+        window.deleteCert = async (id) => {
+            if (!confirm("Khatri aahe? Certificate kaamche nighun jail!")) return;
 
-      if (!file) {
-        alert("Krupaya ek image select kara!");
-        return;
-      }
+            try {
+                const res = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+                if (res.ok) {
+                    loadCertificates(); 
+                } else {
+                    const errorData = await res.json();
+                    alert("Delete karta aale nahi: " + errorData.error);
+                }
+            } catch (err) {
+                console.error("Delete error:", err);
+                alert("Server error mule delete jhale nahi.");
+            }
+        };
 
-      const formData = new FormData();
-      formData.append("image", file);
+        // --- 3. CREATE LOGIC ---
+        addBtn.onclick = async (e) => {
+            e.preventDefault();
+            const file = imageInput.files[0];
 
-      try {
-        addBtn.disabled = true;
-        addBtn.innerText = "Saving...";
+            if (!file) {
+                alert("Krupaya ek image select kara!");
+                return;
+            }
 
-        const response = await fetch(API_URL, {
-          method: "POST",
-          body: formData,
-        });
+            const formData = new FormData();
+            formData.append("image", file); 
 
-        const result = await response.json();
+            try {
+                addBtn.disabled = true;
+                addBtn.innerText = "Saving...";
 
-        if (response.ok) {
-          alert("Certificate successfully save jhale!");
-          imageInput.value = "";
-          loadCertificates();
-        } else {
-          alert("Error: " + (result.error || "Upload fail jhale"));
-        }
-      } catch (err) {
-        console.error("Fetch error:", err);
-        alert("Backend connect hot nahiye!");
-      } finally {
-        addBtn.disabled = false;
-        addBtn.innerText = "Save Certificate";
-      }
-    };
+                const response = await fetch(API_URL, {
+                    method: "POST",
+                    body: formData
+                });
 
-    loadCertificates();
-  });
+                const result = await response.json();
+
+                if (response.ok) {
+                    alert("Certificate successfully save jhale!");
+                    imageInput.value = ""; 
+                    loadCertificates(); 
+                } else {
+                    alert("Error: " + (result.error || "Upload fail jhale"));
+                }
+            } catch (err) {
+                console.error("Fetch error:", err);
+                alert("Backend connect hot nahiye!");
+            } finally {
+                addBtn.disabled = false;
+                addBtn.innerText = "Save Certificate";
+            }
+        };
+
+        loadCertificates();
+    });
 })();
+
 
 // ------------------------------
 // Placement Section Admin JS
 // ------------------------------
 
-const API_URL = `${BASE_URL}/api/placements`;
+const API_URL = `${BASE_URL}/api/placements`; 
 
 document.addEventListener("DOMContentLoaded", () => {
-  fetchPlacements();
+    fetchPlacements();
 
-  const addBtn = document.getElementById("addBtn");
-  if (addBtn) {
-    addBtn.addEventListener("click", addPlacement);
-  }
+    const addBtn = document.getElementById("addBtn");
+    if(addBtn) {
+        addBtn.addEventListener("click", addPlacement);
+    }
 });
 
 // 1. सर्व Placements मिळवून लिस्ट दाखवणे
 async function fetchPlacements() {
-  try {
-    const response = await fetch(API_URL);
-    const data = await response.json();
+    try {
+        const response = await fetch(API_URL);
+        const data = await response.json();
 
-    const container = document.getElementById("placementsContainer");
-    container.innerHTML = "";
+        const container = document.getElementById("placementsContainer");
+        container.innerHTML = ""; 
 
-    data.forEach((item) => {
-      const row = document.createElement("div");
-      row.className = "placement-item";
-      row.id = `row-${item.id}`;
-      row.innerHTML = `
+        data.forEach(item => {
+            const row = document.createElement("div");
+            row.className = "placement-item";
+            row.id = `row-${item.id}`; 
+            row.innerHTML = `
                 <img src="${item.image}" alt="${item.name}">
                 <span class="data-field">${item.name}</span>
                 <span class="data-field">${item.role}</span>
@@ -239,28 +239,28 @@ async function fetchPlacements() {
                     <button onclick="deletePlacement('${item.id}')" class="delete-btn">Delete</button>
                 </div>
             `;
-      container.appendChild(row);
-    });
-  } catch (error) {
-    console.error("Error fetching placements:", error);
-  }
+            container.appendChild(row);
+        });
+    } catch (error) {
+        console.error("Error fetching placements:", error);
+    }
 }
 
 // 2. EDIT MODE (ओळीत बदल करणे) - window object ला जोडले आहे जेणेकरून HTML ला सापडेल
-window.editPlacement = function (id) {
-  const row = document.getElementById(`row-${id}`);
-  if (!row) return;
+window.editPlacement = function(id) {
+    const row = document.getElementById(`row-${id}`);
+    if (!row) return;
 
-  // span मधून जुना डेटा काढा
-  const fields = row.querySelectorAll(".data-field");
-  const name = fields[0].innerText;
-  const role = fields[1].innerText;
-  const company = fields[2].innerText;
-  const pkg = fields[3].innerText;
-  const currentImg = row.querySelector("img").src;
+    // span मधून जुना डेटा काढा
+    const fields = row.querySelectorAll('.data-field');
+    const name = fields[0].innerText;
+    const role = fields[1].innerText;
+    const company = fields[2].innerText;
+    const pkg = fields[3].innerText;
+    const currentImg = row.querySelector('img').src;
 
-  // Row ला Input मध्ये बदला
-  row.innerHTML = `
+    // Row ला Input मध्ये बदला
+    row.innerHTML = `
         <img src="${currentImg}" style="width: 50px; border-radius: 50%; opacity: 0.5;">
         <input type="text" id="edit-name-${id}" value="${name}" class="inline-edit-input">
         <input type="text" id="edit-role-${id}" value="${role}" class="inline-edit-input">
@@ -274,77 +274,75 @@ window.editPlacement = function (id) {
 };
 
 // 3. SAVE UPDATED DATA
-window.savePlacement = async function (id) {
-  const name = document.getElementById(`edit-name-${id}`).value;
-  const role = document.getElementById(`edit-role-${id}`).value;
-  const company = document.getElementById(`edit-company-${id}`).value;
-  const pkg = document.getElementById(`edit-pkg-${id}`).value;
+window.savePlacement = async function(id) {
+    const name = document.getElementById(`edit-name-${id}`).value;
+    const role = document.getElementById(`edit-role-${id}`).value;
+    const company = document.getElementById(`edit-company-${id}`).value;
+    const pkg = document.getElementById(`edit-pkg-${id}`).value;
 
-  try {
-    const response = await fetch(`${API_URL}/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, role, company, pkg }),
-    });
+    try {
+        const response = await fetch(`${API_URL}/${id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name, role, company, pkg })
+        });
 
-    if (response.ok) {
-      alert("डेटा यशस्वीरित्या अपडेट झाला!");
-      fetchPlacements();
-    } else {
-      alert("अपडेट करताना त्रुटी आली.");
+        if (response.ok) {
+            alert("डेटा यशस्वीरित्या अपडेट झाला!");
+            fetchPlacements();
+        } else {
+            alert("अपडेट करताना त्रुटी आली.");
+        }
+    } catch (error) {
+        console.error("Save error:", error);
     }
-  } catch (error) {
-    console.error("Save error:", error);
-  }
 };
 
 // 4. ADD NEW
 async function addPlacement() {
-  const name = document.getElementById("studentName").value;
-  const company = document.getElementById("studentCompany").value;
-  const role = document.getElementById("studentRole").value;
-  const pkg = document.getElementById("studentPackage").value;
-  const imageFile = document.getElementById("studentImage").files[0];
+    const name = document.getElementById("studentName").value;
+    const company = document.getElementById("studentCompany").value;
+    const role = document.getElementById("studentRole").value;
+    const pkg = document.getElementById("studentPackage").value;
+    const imageFile = document.getElementById("studentImage").files[0];
 
-  if (!name || !company || !role || !pkg || !imageFile) {
-    alert("सर्व माहिती भरा!");
-    return;
-  }
-
-  const formData = new FormData();
-  formData.append("name", name);
-  formData.append("company", company);
-  formData.append("role", role);
-  formData.append("pkg", pkg);
-  formData.append("image", imageFile);
-
-  try {
-    const response = await fetch(API_URL, { method: "POST", body: formData });
-    if (response.ok) {
-      alert("Add यशस्वी!");
-      clearInputs();
-      fetchPlacements();
+    if (!name || !company || !role || !pkg || !imageFile) {
+        alert("सर्व माहिती भरा!");
+        return;
     }
-  } catch (error) {
-    console.error("Add error:", error);
-  }
+
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("company", company);
+    formData.append("role", role);
+    formData.append("pkg", pkg);
+    formData.append("image", imageFile);
+
+    try {
+        const response = await fetch(API_URL, { method: "POST", body: formData });
+        if (response.ok) {
+            alert("Add यशस्वी!");
+            clearInputs();
+            fetchPlacements();
+        }
+    } catch (error) {
+        console.error("Add error:", error);
+    }
 }
 
 // 5. DELETE
-window.deletePlacement = async function (id) {
-  if (!confirm("Delete करायचे आहे का?")) return;
-  try {
-    const response = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
-    if (response.ok) fetchPlacements();
-  } catch (error) {
-    console.error("Delete error:", error);
-  }
+window.deletePlacement = async function(id) {
+    if (!confirm("Delete करायचे आहे का?")) return;
+    try {
+        const response = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+        if (response.ok) fetchPlacements();
+    } catch (error) {
+        console.error("Delete error:", error);
+    }
 };
 
 function clearInputs() {
-  document
-    .querySelectorAll(".form input")
-    .forEach((input) => (input.value = ""));
+    document.querySelectorAll(".form input").forEach(input => input.value = "");
 }
 
 // ============================
@@ -358,23 +356,23 @@ let editingCourseId = null;
 // 1. DATA LOAD KARNE
 // ===============================
 async function loadCourses() {
-  try {
-    const res = await fetch(COURSE_API);
-    const courses = await res.json();
-    const table = document.getElementById("coursesTable");
+    try {
+        const res = await fetch(COURSE_API);
+        const courses = await res.json();
+        const table = document.getElementById("coursesTable");
+        
+        if (!table) return;
+        table.innerHTML = "";
 
-    if (!table) return;
-    table.innerHTML = "";
+        if (!courses || courses.length === 0 || courses.error) {
+            table.innerHTML = `<tr><td colspan="3" style="text-align:center;">No courses found</td></tr>`;
+            return;
+        }
 
-    if (!courses || courses.length === 0 || courses.error) {
-      table.innerHTML = `<tr><td colspan="3" style="text-align:center;">No courses found</td></tr>`;
-      return;
-    }
-
-    courses.forEach((course) => {
-      const row = document.createElement("tr");
-      row.dataset.id = course.id;
-      row.innerHTML = `
+        courses.forEach(course => {
+            const row = document.createElement("tr");
+            row.dataset.id = course.id;
+            row.innerHTML = `
                 <td class="course-duration">${course.duration}</td>
                 <td class="course-startdate">${course.start_date}</td>
                 <td>
@@ -382,113 +380,112 @@ async function loadCourses() {
                     <button class="action-btn delete" onclick="deleteCourse('${course.id}')" style="background:#dc3545; color:#fff; border:none; padding:5px 10px; cursor:pointer; border-radius:4px;">Delete</button>
                 </td>
             `;
-      table.appendChild(row);
-    });
-  } catch (err) {
-    console.error("Course load error:", err);
-  }
+            table.appendChild(row);
+        });
+    } catch (err) {
+        console.error("Course load error:", err);
+    }
 }
 
 // ===============================
 // 2. DATA ADD KIWA UPDATE KARNE
 // ===============================
 async function addCourse() {
-  const durationInput = document.getElementById("courseDuration");
-  const startDateInput = document.getElementById("courseStartDate");
+    const durationInput = document.getElementById("courseDuration");
+    const startDateInput = document.getElementById("courseStartDate");
+    
+    // HTML class badalnyachi garaj nahi, querySelector vaprun button sho dhuya
+    const submitBtn = document.querySelector("#courses .form button");
 
-  // HTML class badalnyachi garaj nahi, querySelector vaprun button sho dhuya
-  const submitBtn = document.querySelector("#courses .form button");
+    const duration = durationInput.value.trim();
+    const start_date = startDateInput.value;
 
-  const duration = durationInput.value.trim();
-  const start_date = startDateInput.value;
-
-  if (!duration || !start_date) {
-    alert("Krupaya sarva mahiti bhara!");
-    return;
-  }
-
-  const payload = { duration, start_date };
-
-  try {
-    if (submitBtn) {
-      submitBtn.disabled = true;
-      submitBtn.innerText = "Saving...";
+    if (!duration || !start_date) {
+        alert("Krupaya sarva mahiti bhara!");
+        return;
     }
 
-    let response;
-    if (editingCourseId) {
-      // UPDATE
-      response = await fetch(`${COURSE_API}/${editingCourseId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-    } else {
-      // ADD NEW
-      response = await fetch(COURSE_API, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+    const payload = { duration, start_date };
+
+    try {
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.innerText = "Saving...";
+        }
+
+        let response;
+        if (editingCourseId) {
+            // UPDATE
+            response = await fetch(`${COURSE_API}/${editingCourseId}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+        } else {
+            // ADD NEW
+            response = await fetch(COURSE_API, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+        }
+
+        if (response.ok) {
+            alert(editingCourseId ? "Course Updated!" : "Course Added to Supabase!");
+            
+            // Reset Form
+            durationInput.value = "";
+            startDateInput.value = "";
+            editingCourseId = null;
+            if (submitBtn) submitBtn.innerText = "Add Course";
+            
+            loadCourses(); 
+        } else {
+            const errorMsg = await response.json();
+            alert("Error: " + (errorMsg.error || "Failed to save"));
+        }
+    } catch (err) {
+        console.error("Save error:", err);
+        alert("Server connection failed!");
+    } finally {
+        if (submitBtn) submitBtn.disabled = false;
     }
-
-    if (response.ok) {
-      alert(editingCourseId ? "Course Updated!" : "Course Added to Supabase!");
-
-      // Reset Form
-      durationInput.value = "";
-      startDateInput.value = "";
-      editingCourseId = null;
-      if (submitBtn) submitBtn.innerText = "Add Course";
-
-      loadCourses();
-    } else {
-      const errorMsg = await response.json();
-      alert("Error: " + (errorMsg.error || "Failed to save"));
-    }
-  } catch (err) {
-    console.error("Save error:", err);
-    alert("Server connection failed!");
-  } finally {
-    if (submitBtn) submitBtn.disabled = false;
-  }
 }
 
 // ===============================
 // 3. EDIT SATHI FORM BHARNE
 // ===============================
 function editCourse(btn) {
-  const row = btn.closest("tr");
-  editingCourseId = row.dataset.id;
-
-  document.getElementById("courseDuration").value =
-    row.querySelector(".course-duration").innerText;
-  document.getElementById("courseStartDate").value =
-    row.querySelector(".course-startdate").innerText;
-
-  const submitBtn = document.querySelector("#courses .form button");
-  if (submitBtn) submitBtn.innerText = "Update Course";
+    const row = btn.closest("tr");
+    editingCourseId = row.dataset.id;
+    
+    document.getElementById("courseDuration").value = row.querySelector(".course-duration").innerText;
+    document.getElementById("courseStartDate").value = row.querySelector(".course-startdate").innerText;
+    
+    const submitBtn = document.querySelector("#courses .form button");
+    if (submitBtn) submitBtn.innerText = "Update Course";
 }
 
 // ===============================
 // 4. DATA DELETE KARNE
 // ===============================
 async function deleteCourse(id) {
-  if (!confirm("Haa course delete karaycha ka?")) return;
-
-  try {
-    const res = await fetch(`${COURSE_API}/${id}`, { method: "DELETE" });
-    if (res.ok) {
-      loadCourses();
-    } else {
-      alert("Delete failed.");
+    if (!confirm("Haa course delete karaycha ka?")) return;
+    
+    try {
+        const res = await fetch(`${COURSE_API}/${id}`, { method: "DELETE" });
+        if (res.ok) {
+            loadCourses();
+        } else {
+            alert("Delete failed.");
+        }
+    } catch (err) {
+        console.error("Delete error:", err);
     }
-  } catch (err) {
-    console.error("Delete error:", err);
-  }
 }
 
 document.addEventListener("DOMContentLoaded", loadCourses);
+
 
 // ===============================
 // TRAINING SECTION ADMIN JS
@@ -504,17 +501,16 @@ async function loadTrainings() {
     const res = await fetch(training_URL);
     const data = await res.json();
     const container = document.getElementById("trainingTable");
-
+    
     if (!container) return;
     container.innerHTML = "";
 
     if (!data || data.length === 0) {
-      container.innerHTML =
-        "<p style='text-align:center; width:100%; padding:20px;'>No trainings found.</p>";
+      container.innerHTML = "<p style='text-align:center; width:100%; padding:20px;'>No trainings found.</p>";
       return;
     }
 
-    data.forEach((t) => {
+    data.forEach(t => {
       const card = document.createElement("div");
       card.className = "training-card";
       card.dataset.id = t.id;
@@ -537,63 +533,61 @@ async function loadTrainings() {
 }
 
 // ================= ADD / UPDATE TRAINING =================
-document
-  .getElementById("addBtnTraining")
-  .addEventListener("click", async (e) => {
-    e.preventDefault();
+document.getElementById("addBtnTraining").addEventListener("click", async (e) => {
+  e.preventDefault();
+  
+  const iconInput = document.getElementById("t1");
+  const titleInput = document.getElementById("t2");
+  const addBtn = document.getElementById("addBtnTraining");
 
-    const iconInput = document.getElementById("t1");
-    const titleInput = document.getElementById("t2");
-    const addBtn = document.getElementById("addBtnTraining");
+  const icon = iconInput.value.trim();
+  const name = titleInput.value.trim();
 
-    const icon = iconInput.value.trim();
-    const name = titleInput.value.trim();
+  if (!icon || !name) {
+    alert("Please fill all fields (Icon class and Training Name)");
+    return;
+  }
 
-    if (!icon || !name) {
-      alert("Please fill all fields (Icon class and Training Name)");
-      return;
+  const payload = { icon, name };
+
+  try {
+    addBtn.disabled = true;
+    addBtn.innerText = "Saving...";
+
+    let response;
+    if (editingTrainingId) {
+      // UPDATE
+      response = await fetch(`${training_URL}/${editingTrainingId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      editingTrainingId = null;
+    } else {
+      // ADD
+      response = await fetch(training_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
     }
 
-    const payload = { icon, name };
-
-    try {
-      addBtn.disabled = true;
-      addBtn.innerText = "Saving...";
-
-      let response;
-      if (editingTrainingId) {
-        // UPDATE
-        response = await fetch(`${training_URL}/${editingTrainingId}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-        editingTrainingId = null;
-      } else {
-        // ADD
-        response = await fetch(training_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-      }
-
-      if (response.ok) {
-        iconInput.value = "";
-        titleInput.value = "";
-        addBtn.innerText = "Add";
-        loadTrainings();
-      } else {
-        alert("Failed to save training.");
-      }
-    } catch (err) {
-      console.error("Training save error:", err);
-      alert("Server error!");
-    } finally {
-      addBtn.disabled = false;
-      if (!editingTrainingId) addBtn.innerText = "Add";
+    if (response.ok) {
+      iconInput.value = "";
+      titleInput.value = "";
+      addBtn.innerText = "Add";
+      loadTrainings();
+    } else {
+      alert("Failed to save training.");
     }
-  });
+  } catch (err) {
+    console.error("Training save error:", err);
+    alert("Server error!");
+  } finally {
+    addBtn.disabled = false;
+    if (!editingTrainingId) addBtn.innerText = "Add";
+  }
+});
 
 // ================= EDIT =================
 // Note: 'btn' pass केला जातोय, त्यावरून आपण डेटा काढतो
@@ -601,11 +595,9 @@ function editTraining(btn) {
   const card = btn.closest(".training-card");
   editingTrainingId = card.dataset.id;
 
-  document.getElementById("t1").value =
-    card.querySelector(".training-icon i").className;
-  document.getElementById("t2").value =
-    card.querySelector(".training-title").innerText;
-
+  document.getElementById("t1").value = card.querySelector(".training-icon i").className;
+  document.getElementById("t2").value = card.querySelector(".training-title").innerText;
+  
   const addBtn = document.getElementById("addBtnTraining");
   addBtn.innerText = "Update";
   document.getElementById("t1").focus();
@@ -629,94 +621,92 @@ async function deleteTraining(btn) {
   } catch (err) {
     console.error("Delete error:", err);
   }
-}
-const TRAINING_API = `${BASE_URL}/api/trainings`;
+}const TRAINING_API = `${BASE_URL}/api/trainings`;
 
 // 1. DATA LOAD KARNE
 async function loadTrainings() {
-  try {
-    const res = await fetch(TRAINING_API);
-    const data = await res.json();
-    const container = document.getElementById("trainingTable");
+    try {
+        const res = await fetch(TRAINING_API);
+        const data = await res.json();
+        const container = document.getElementById("trainingTable");
+        
+        if (!container) return;
+        container.innerHTML = "";
 
-    if (!container) return;
-    container.innerHTML = "";
+        if (!data || data.length === 0) {
+            container.innerHTML = `<p style="text-align:center; padding: 20px;">No trainings found.</p>`;
+            return;
+        }
 
-    if (!data || data.length === 0) {
-      container.innerHTML = `<p style="text-align:center; padding: 20px;">No trainings found.</p>`;
-      return;
-    }
-
-    data.forEach((t) => {
-      const card = document.createElement("div");
-      card.className = "training-card"; // Tumcha CSS class
-      card.style =
-        "display: flex; align-items: center; padding: 10px; border-bottom: 1px solid #eee;";
-
-      card.innerHTML = `
+        data.forEach(t => {
+            const card = document.createElement("div");
+            card.className = "training-card"; // Tumcha CSS class
+            card.style = "display: flex; align-items: center; padding: 10px; border-bottom: 1px solid #eee;";
+            
+            card.innerHTML = `
                 <div style="flex: 1;"><i class="${t.icon}" style="font-size: 20px;"></i></div>
                 <div style="flex: 2;">${t.name}</div>
                 <div style="flex: 1;">
                     <button onclick="deleteTraining('${t.id}')" style="background:#dc3545; color:white; border:none; padding:5px 10px; cursor:pointer; border-radius:4px;">Delete</button>
                 </div>
             `;
-      container.appendChild(card);
-    });
-  } catch (err) {
-    console.error("Load error:", err);
-  }
+            container.appendChild(card);
+        });
+    } catch (err) {
+        console.error("Load error:", err);
+    }
 }
 
 // 2. DATA ADD KARNE
 async function addTraining() {
-  const iconInput = document.getElementById("t1");
-  const nameInput = document.getElementById("t2");
-  const submitBtn = document.getElementById("addBtnTraining");
+    const iconInput = document.getElementById("t1");
+    const nameInput = document.getElementById("t2");
+    const submitBtn = document.getElementById("addBtnTraining");
 
-  const payload = {
-    icon: iconInput.value.trim(),
-    name: nameInput.value.trim(),
-  };
+    const payload = {
+        icon: iconInput.value.trim(),
+        name: nameInput.value.trim()
+    };
 
-  if (!payload.icon || !payload.name) {
-    alert("Krupaya Icon class ani Name dohi bhara!");
-    return;
-  }
-
-  try {
-    submitBtn.disabled = true;
-    submitBtn.innerText = "Saving...";
-
-    const res = await fetch(TRAINING_API, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-
-    if (res.ok) {
-      iconInput.value = "";
-      nameInput.value = "";
-      loadTrainings(); // Refresh list
-    } else {
-      alert("Database madhe save karta ale nahi.");
+    if (!payload.icon || !payload.name) {
+        alert("Krupaya Icon class ani Name dohi bhara!");
+        return;
     }
-  } catch (err) {
-    console.error("Add error:", err);
-  } finally {
-    submitBtn.disabled = false;
-    submitBtn.innerText = "Add";
-  }
+
+    try {
+        submitBtn.disabled = true;
+        submitBtn.innerText = "Saving...";
+
+        const res = await fetch(TRAINING_API, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+            iconInput.value = "";
+            nameInput.value = "";
+            loadTrainings(); // Refresh list
+        } else {
+            alert("Database madhe save karta ale nahi.");
+        }
+    } catch (err) {
+        console.error("Add error:", err);
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerText = "Add";
+    }
 }
 
 // 3. DELETE KARNE
 async function deleteTraining(id) {
-  if (!confirm("Hee training delete karaychi ka?")) return;
-  try {
-    const res = await fetch(`${TRAINING_API}/${id}`, { method: "DELETE" });
-    if (res.ok) loadTrainings();
-  } catch (err) {
-    console.error("Delete error:", err);
-  }
+    if (!confirm("Hee training delete karaychi ka?")) return;
+    try {
+        const res = await fetch(`${TRAINING_API}/${id}`, { method: "DELETE" });
+        if (res.ok) loadTrainings();
+    } catch (err) {
+        console.error("Delete error:", err);
+    }
 }
 
 // INIT
@@ -752,28 +742,27 @@ document.addEventListener("DOMContentLoaded", loadTrainings);
         if (data && data.length > 0) {
           // Apan pahila record inputs madhe bharu (Editing sathi)
           const c = data[0];
-          currentContactId = c.id;
-
+          currentContactId = c.id; 
+          
           document.getElementById("m2").value = c.email || "";
           document.getElementById("m4").value = c.mobile || "";
           document.getElementById("m5").value = c.instagram || "";
           document.getElementById("m6").value = c.linkedin || "";
-
+          
           saveBtn.innerText = "Update Contact";
 
           // Card Swarupat Frontend la dakhavne
-          data.forEach((item) => {
-            const card = document.createElement("div");
-            card.className = "contact-card-item"; // Tumcha CSS class
-            card.style =
-              "border: 1px solid #ccc; padding: 10px; margin: 10px 0; border-radius: 8px; background: #f9f9f9;";
-            card.innerHTML = `
+          data.forEach(item => {
+              const card = document.createElement("div");
+              card.className = "contact-card-item"; // Tumcha CSS class
+              card.style = "border: 1px solid #ccc; padding: 10px; margin: 10px 0; border-radius: 8px; background: #f9f9f9;";
+              card.innerHTML = `
                 <p><strong>Email:</strong> ${item.email}</p>
                 <p><strong>Mobile:</strong> ${item.mobile}</p>
-                <p><strong>Insta:</strong> ${item.instagram || "N/A"}</p>
-                <p><strong>LinkedIn:</strong> ${item.linkedin || "N/A"}</p>
+                <p><strong>Insta:</strong> ${item.instagram || 'N/A'}</p>
+                <p><strong>LinkedIn:</strong> ${item.linkedin || 'N/A'}</p>
               `;
-            container.appendChild(card);
+              container.appendChild(card);
           });
         }
       } catch (err) {
@@ -809,14 +798,14 @@ document.addEventListener("DOMContentLoaded", loadTrainings);
           res = await fetch(`${CONTACT_API}/${currentContactId}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
+            body: JSON.stringify(payload)
           });
         } else {
           // Jar ID nasel tar NEW (POST) kara
           res = await fetch(CONTACT_API, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
+            body: JSON.stringify(payload)
           });
         }
 
@@ -846,9 +835,9 @@ document.addEventListener("DOMContentLoaded", loadTrainings);
 ================================ */
 document.addEventListener("DOMContentLoaded", () => {
   const lastPanel = localStorage.getItem("activePanel") || "dashboard";
-  document
-    .querySelectorAll(".panel")
-    .forEach((panel) => panel.classList.remove("show"));
+  document.querySelectorAll(".panel").forEach(panel =>
+    panel.classList.remove("show")
+  );
   const panel = document.getElementById(lastPanel);
   if (panel) panel.classList.add("show");
 });
@@ -875,8 +864,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     // Redirect out of admin panel
-    window.location.replace(
-      "https://mentore-solutions-devopsbrouchure.vercel.app",
-    ); // change if needed
+    window.location.replace("https://mentore-solutions-devopsbrouchure.vercel.app"); // change if needed
   });
 });
+

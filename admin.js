@@ -346,10 +346,11 @@ function clearInputs() {
 }
 
 // ============================
-// COURSE JS (Vercel Ready)
+// JAVA COURSE JS (courses1 Table)
 // ============================
 
-const COURSE_API = `${BASE_URL}/api/courses`;
+// Fakt API endpoint badalla aahe
+const COURSE_API = `${BASE_URL}/api/java-courses`;
 let editingCourseId = null;
 
 // ===============================
@@ -373,8 +374,8 @@ async function loadCourses() {
             const row = document.createElement("tr");
             row.dataset.id = course.id;
             row.innerHTML = `
-                <td class="course-duration">${course.duration}</td>
-                <td class="course-startdate">${course.start_date}</td>
+                <td class="course-duration">${course.duration1}</td>
+                <td class="course-startdate">${course.start_date1}</td>
                 <td>
                     <button class="action-btn edit" onclick="editCourse(this)" style="background:#ffc107; border:none; padding:5px 10px; cursor:pointer; border-radius:4px;">Edit</button>
                     <button class="action-btn delete" onclick="deleteCourse('${course.id}')" style="background:#dc3545; color:#fff; border:none; padding:5px 10px; cursor:pointer; border-radius:4px;">Delete</button>
@@ -393,8 +394,6 @@ async function loadCourses() {
 async function addCourse() {
     const durationInput = document.getElementById("courseDuration");
     const startDateInput = document.getElementById("courseStartDate");
-    
-    // HTML class badalnyachi garaj nahi, querySelector vaprun button sho dhuya
     const submitBtn = document.querySelector("#courses .form button");
 
     const duration = durationInput.value.trim();
@@ -405,7 +404,11 @@ async function addCourse() {
         return;
     }
 
-    const payload = { duration, start_date };
+    // Payload madhe table pramane duration1 ani start_date1 vapre aahet
+    const payload = { 
+        duration1: duration, 
+        start_date1: start_date 
+    };
 
     try {
         if (submitBtn) {

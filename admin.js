@@ -345,26 +345,36 @@ function clearInputs() {
     document.querySelectorAll(".form input").forEach(input => input.value = "");
 }
 
-// ===============================
-//COURSE SECTION ADMIN JS
-// ===============================
-const COURSE_API = `${BASE_URL}/api/java-courses`;
+// ============================
+// COURSE JS (Vercel Ready)
+// ============================
+
+const COURSE_API = `${BASE_URL}/api/courses`;
 let editingCourseId = null;
 
+// ===============================
+// 1. DATA LOAD KARNE
+// ===============================
 async function loadCourses() {
     try {
         const res = await fetch(COURSE_API);
         const courses = await res.json();
         const table = document.getElementById("coursesTable");
+        
         if (!table) return;
         table.innerHTML = "";
+
+        if (!courses || courses.length === 0 || courses.error) {
+            table.innerHTML = `<tr><td colspan="3" style="text-align:center;">No courses found</td></tr>`;
+            return;
+        }
 
         courses.forEach(course => {
             const row = document.createElement("tr");
             row.dataset.id = course.id;
             row.innerHTML = `
-                <td class="course-duration">${course.duration1}</td>
-                <td class="course-startdate">${course.start_date1}</td>
+                <td class="course-duration">${course.duration}</td>
+                <td class="course-startdate">${course.start_date}</td>
                 <td>
                     <button class="action-btn edit" onclick="editCourse(this)" style="background:#ffc107; border:none; padding:5px 10px; cursor:pointer; border-radius:4px;">Edit</button>
                     <button class="action-btn delete" onclick="deleteCourse('${course.id}')" style="background:#dc3545; color:#fff; border:none; padding:5px 10px; cursor:pointer; border-radius:4px;">Delete</button>
@@ -372,12 +382,19 @@ async function loadCourses() {
             `;
             table.appendChild(row);
         });
-    } catch (err) { console.error("Course load error:", err); }
+    } catch (err) {
+        console.error("Course load error:", err);
+    }
 }
 
+// ===============================
+// 2. DATA ADD KIWA UPDATE KARNE
+// ===============================
 async function addCourse() {
     const durationInput = document.getElementById("courseDuration");
     const startDateInput = document.getElementById("courseStartDate");
+    
+    // HTML class badalnyachi garaj nahi, querySelector vaprun button sho dhuya
     const submitBtn = document.querySelector("#courses .form button");
 
     const duration = durationInput.value.trim();
@@ -388,8 +405,7 @@ async function addCourse() {
         return;
     }
 
-    // Database schema nusar duration1 ani start_date1
-    const payload = { duration1: duration, start_date1: start_date };
+    const payload = { duration, start_date };
 
     try {
         if (submitBtn) {
@@ -399,12 +415,14 @@ async function addCourse() {
 
         let response;
         if (editingCourseId) {
+            // UPDATE
             response = await fetch(`${COURSE_API}/${editingCourseId}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload)
             });
         } else {
+            // ADD NEW
             response = await fetch(COURSE_API, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -413,37 +431,57 @@ async function addCourse() {
         }
 
         if (response.ok) {
-            alert(editingCourseId ? "Java Course Updated!" : "Java Course Added!");
+            alert(editingCourseId ? "Course Updated!" : "Course Added to Supabase!");
+            
+            // Reset Form
             durationInput.value = "";
             startDateInput.value = "";
             editingCourseId = null;
             if (submitBtn) submitBtn.innerText = "Add Course";
+            
             loadCourses(); 
         } else {
-            alert("Error: Database saving failed.");
+            const errorMsg = await response.json();
+            alert("Error: " + (errorMsg.error || "Failed to save"));
         }
     } catch (err) {
+        console.error("Save error:", err);
         alert("Server connection failed!");
     } finally {
         if (submitBtn) submitBtn.disabled = false;
     }
 }
 
+// ===============================
+// 3. EDIT SATHI FORM BHARNE
+// ===============================
 function editCourse(btn) {
     const row = btn.closest("tr");
     editingCourseId = row.dataset.id;
+    
     document.getElementById("courseDuration").value = row.querySelector(".course-duration").innerText;
     document.getElementById("courseStartDate").value = row.querySelector(".course-startdate").innerText;
+    
     const submitBtn = document.querySelector("#courses .form button");
     if (submitBtn) submitBtn.innerText = "Update Course";
 }
 
+// ===============================
+// 4. DATA DELETE KARNE
+// ===============================
 async function deleteCourse(id) {
-    if (!confirm("Delete karayche?")) return;
+    if (!confirm("Haa course delete karaycha ka?")) return;
+    
     try {
         const res = await fetch(`${COURSE_API}/${id}`, { method: "DELETE" });
-        if (res.ok) loadCourses();
-    } catch (err) { console.error("Delete error:", err); }
+        if (res.ok) {
+            loadCourses();
+        } else {
+            alert("Delete failed.");
+        }
+    } catch (err) {
+        console.error("Delete error:", err);
+    }
 }
 
 document.addEventListener("DOMContentLoaded", loadCourses);

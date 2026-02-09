@@ -372,9 +372,10 @@ async function loadCourses() {
         courses.forEach(course => {
             const row = document.createElement("tr");
             row.dataset.id = course.id;
+            // UPDATE: Changed course.duration to course.duration1 and course.start_date to course.start_date1
             row.innerHTML = `
-                <td class="course-duration">${course.duration}</td>
-                <td class="course-startdate">${course.start_date}</td>
+                <td class="course-duration">${course.duration1}</td>
+                <td class="course-startdate">${course.start_date1}</td>
                 <td>
                     <button class="action-btn edit" onclick="editCourse(this)" style="background:#ffc107; border:none; padding:5px 10px; cursor:pointer; border-radius:4px;">Edit</button>
                     <button class="action-btn delete" onclick="deleteCourse('${course.id}')" style="background:#dc3545; color:#fff; border:none; padding:5px 10px; cursor:pointer; border-radius:4px;">Delete</button>
@@ -393,19 +394,18 @@ async function loadCourses() {
 async function addCourse() {
     const durationInput = document.getElementById("courseDuration");
     const startDateInput = document.getElementById("courseStartDate");
-    
-    // HTML class badalnyachi garaj nahi, querySelector vaprun button sho dhuya
     const submitBtn = document.querySelector("#courses .form button");
 
-    const duration = durationInput.value.trim();
-    const start_date = startDateInput.value;
+    const duration1 = durationInput.value.trim();
+    const start_date1 = startDateInput.value;
 
-    if (!duration || !start_date) {
+    if (!duration1 || !start_date1) {
         alert("Krupaya sarva mahiti bhara!");
         return;
     }
 
-    const payload = { duration, start_date };
+    // UPDATE: Payload keys are now duration1 and start_date1
+    const payload = { duration1, start_date1 };
 
     try {
         if (submitBtn) {
@@ -431,7 +431,7 @@ async function addCourse() {
         }
 
         if (response.ok) {
-            alert(editingCourseId ? "Course Updated!" : "Course Added to Supabase!");
+            alert(editingCourseId ? "Course Updated!" : "Course Added Successfully!");
             
             // Reset Form
             durationInput.value = "";
@@ -453,7 +453,7 @@ async function addCourse() {
 }
 
 // ===============================
-// 3. EDIT SATHI FORM BHARNE
+// 3. EDIT SATHI FORM BHARNE (Remaining as is)
 // ===============================
 function editCourse(btn) {
     const row = btn.closest("tr");
@@ -467,7 +467,7 @@ function editCourse(btn) {
 }
 
 // ===============================
-// 4. DATA DELETE KARNE
+// 4. DATA DELETE KARNE (Remaining as is)
 // ===============================
 async function deleteCourse(id) {
     if (!confirm("Haa course delete karaycha ka?")) return;

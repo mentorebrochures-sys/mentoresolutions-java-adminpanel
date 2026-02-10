@@ -345,8 +345,9 @@ function clearInputs() {
     document.querySelectorAll(".form input").forEach(input => input.value = "");
 }
 
+
 // ============================
-// COURSE JS (Vercel Ready)
+// COURSE JS (Vercel Ready - Updated for Multi-Course)
 // ============================
 
 const COURSE_API = `${BASE_URL}/api/courses`;
@@ -365,7 +366,7 @@ async function loadCourses() {
         table.innerHTML = "";
 
         if (!courses || courses.length === 0 || courses.error) {
-            table.innerHTML = `<tr><td colspan="3" style="text-align:center;">No courses found</td></tr>`;
+            table.innerHTML = `<tr><td colspan="4" style="text-align:center;">No courses found</td></tr>`;
             return;
         }
 
@@ -373,6 +374,7 @@ async function loadCourses() {
             const row = document.createElement("tr");
             row.dataset.id = course.id;
             row.innerHTML = `
+                <td class="course-name" style="font-weight:bold; color:#007bff;">${course.course_name.toUpperCase()}</td>
                 <td class="course-duration">${course.duration}</td>
                 <td class="course-startdate">${course.start_date}</td>
                 <td>
@@ -393,19 +395,21 @@ async function loadCourses() {
 async function addCourse() {
     const durationInput = document.getElementById("courseDuration");
     const startDateInput = document.getElementById("courseStartDate");
+    const courseTypeSelect = document.getElementById("courseType"); // New Dropdown
     
-    // HTML class badalnyachi garaj nahi, querySelector vaprun button sho dhuya
     const submitBtn = document.querySelector("#courses .form button");
 
     const duration = durationInput.value.trim();
     const start_date = startDateInput.value;
+    const course_name = courseTypeSelect.value; // 'java' or 'devops'
 
-    if (!duration || !start_date) {
-        alert("Krupaya sarva mahiti bhara!");
+    if (!duration || !start_date || !course_name) {
+        alert("Krupaya sarva mahiti bhara (Course Type suddha)!");
         return;
     }
 
-    const payload = { duration, start_date };
+    // Payload madhe course_name add kela aahe
+    const payload = { duration, start_date, course_name };
 
     try {
         if (submitBtn) {
@@ -415,14 +419,12 @@ async function addCourse() {
 
         let response;
         if (editingCourseId) {
-            // UPDATE
             response = await fetch(`${COURSE_API}/${editingCourseId}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload)
             });
         } else {
-            // ADD NEW
             response = await fetch(COURSE_API, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -431,11 +433,12 @@ async function addCourse() {
         }
 
         if (response.ok) {
-            alert(editingCourseId ? "Course Updated!" : "Course Added to Supabase!");
+            alert(editingCourseId ? "Course Updated!" : "Course Added Successfully!");
             
             // Reset Form
             durationInput.value = "";
             startDateInput.value = "";
+            courseTypeSelect.value = "java"; // Reset to default
             editingCourseId = null;
             if (submitBtn) submitBtn.innerText = "Add Course";
             
@@ -459,6 +462,9 @@ function editCourse(btn) {
     const row = btn.closest("tr");
     editingCourseId = row.dataset.id;
     
+    // Dropdown chi value row madhun gha ani select kara
+    const name = row.querySelector(".course-name").innerText.toLowerCase();
+    document.getElementById("courseType").value = name;
     document.getElementById("courseDuration").value = row.querySelector(".course-duration").innerText;
     document.getElementById("courseStartDate").value = row.querySelector(".course-startdate").innerText;
     

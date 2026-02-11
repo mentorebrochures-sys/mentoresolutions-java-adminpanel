@@ -350,7 +350,7 @@ function clearInputs() {
 // COURSE JS (Vercel Ready)
 // ============================
 
-const JAVA_COURSE_API = `${BASE_URL}/api/java-courses`;
+const COURSE_API = `${BASE_URL}/api/courses`;
 let editingCourseId = null;
 
 // ===============================
@@ -358,7 +358,7 @@ let editingCourseId = null;
 // ===============================
 async function loadCourses() {
     try {
-        const res = await fetch(JAVA_COURSE_API);
+        const res = await fetch(COURSE_API);
         const courses = await res.json();
         const table = document.getElementById("coursesTable");
         
@@ -374,8 +374,8 @@ async function loadCourses() {
             const row = document.createElement("tr");
             row.dataset.id = course.id;
             row.innerHTML = `
-                <td class="course-duration">${course.duration2}</td>
-                <td class="course-startdate">${course.start_date2}</td>
+                <td class="course-duration">${course.duration}</td>
+                <td class="course-startdate">${course.start_date}</td>
                 <td>
                     <button class="action-btn edit" onclick="editCourse(this)" style="background:#ffc107; border:none; padding:5px 10px; cursor:pointer; border-radius:4px;">Edit</button>
                     <button class="action-btn delete" onclick="deleteCourse('${course.id}')" style="background:#dc3545; color:#fff; border:none; padding:5px 10px; cursor:pointer; border-radius:4px;">Delete</button>
@@ -398,15 +398,15 @@ async function addCourse() {
     // HTML class badalnyachi garaj nahi, querySelector vaprun button sho dhuya
     const submitBtn = document.querySelector("#courses .form button");
 
-    const duration2 = durationInput.value.trim();
-    const start_date2 = startDateInput.value;
+    const duration = durationInput.value.trim();
+    const start_date = startDateInput.value;
 
-    if (!duration2 || !start_date2) {
+    if (!duration || !start_date) {
         alert("Krupaya sarva mahiti bhara!");
         return;
     }
 
-    const payload = { duration2, start_date2 };
+    const payload = { duration, start_date };
 
     try {
         if (submitBtn) {
@@ -417,14 +417,14 @@ async function addCourse() {
         let response;
         if (editingCourseId) {
             // UPDATE
-            response = await fetch(`${JAVA_COURSE_API}/${editingCourseId}`, {
+            response = await fetch(`${COURSE_API}/${editingCourseId}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload)
             });
         } else {
             // ADD NEW
-            response = await fetch(JAVA_COURSE_API, {
+            response = await fetch(COURSE_API, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload)
@@ -474,7 +474,7 @@ async function deleteCourse(id) {
     if (!confirm("Haa course delete karaycha ka?")) return;
     
     try {
-        const res = await fetch(`${JAVA_COURSE_API}/${id}`, { method: "DELETE" });
+        const res = await fetch(`${COURSE_API}/${id}`, { method: "DELETE" });
         if (res.ok) {
             loadCourses();
         } else {

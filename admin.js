@@ -483,7 +483,7 @@ async function deleteCourse(id) {
     } catch (err) {
         console.error("Delete error:", err);
     }
-}
+}d
 
 document.addEventListener("DOMContentLoaded", loadCourses);
 

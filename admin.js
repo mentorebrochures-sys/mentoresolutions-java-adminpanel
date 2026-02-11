@@ -865,7 +865,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     // Redirect out of admin panel
-    window.location.replace("https://mentore-solutions-devopsbrouchure.vercel.app"); // change if needed
+    window.location.replace("https://mentoresolutions-javabroucher.vercel.app"); // change if needed
   });
 });
 

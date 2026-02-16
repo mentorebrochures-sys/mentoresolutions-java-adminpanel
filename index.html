@@ -64,7 +64,7 @@
         </div>
       </div>
     </section>
-    
+
     <!-- Certificate -->
     <section id="certificate" class="panel">
       <h2>Certificates</h2>
@@ -85,13 +85,13 @@
     </section>
 
     <!-- COURSES ADMIN PANEL -->
-    <section id="courses" class="panel">
-      <h2>Manage Courses</h2>
+    <section id="java-courses" class="panel">
+      <h2>Manage Java Courses</h2>
 
       <div class="form">
-        <input id="courseDuration" placeholder="Total Duration">
-        <input id="courseStartDate" type="date" placeholder="Start Date">
-        <button onclick="addCourse()">Add Course</button>
+        <input id="courseDurationJava" placeholder="Total Duration">
+        <input id="courseStartDateJava" type="date" placeholder="Start Date">
+        <button onclick="addJavaCourse()">Add Java Course</button>
       </div>
 
       <table>
@@ -102,55 +102,56 @@
             <th>Action</th>
           </tr>
         </thead>
-        <tbody id="coursesTable"></tbody>
+        <tbody id="javaCoursesTable"></tbody>
       </table>
     </section>
 
 
     <!-- PLACEMENTS -->
-     
+
     <section id="placements" class="panel">
-  <h2>Manage Placements</h2>
-  
-  <div class="form">
-    <input type="text" id="studentName" placeholder="Student Name">
-    <input type="text" id="studentCompany" placeholder="Company">
-    <input type="text" id="studentRole" placeholder="Role">
-    <input type="text" id="studentPackage" placeholder="Package">
-    <input type="file" id="studentImage" accept="image/*">
-    <button id="addBtn">Add Placement</button>
-  </div>
+      <h2>Manage Placements</h2>
 
-  <div class="placements-headings">
-    <span class="heading">Image</span>
-    <span class="heading">Name</span>
-    <span class="heading">Role</span>
-    <span class="heading">Company</span>
-    <span class="heading">Package</span>
-    <span class="heading">Action</span>
-  </div>
+      <div class="form">
+        <input type="text" id="studentName" placeholder="Student Name">
+        <input type="text" id="studentCompany" placeholder="Company">
+        <input type="text" id="studentRole" placeholder="Role">
+        <input type="text" id="studentPackage" placeholder="Package">
+        <input type="file" id="studentImage" accept="image/*">
+        <button id="addBtn">Add Placement</button>
+      </div>
 
-  <div id="placementsContainer" class="placements-cards"></div>
-</section>
+      <div class="placements-headings">
+        <span class="heading">Image</span>
+        <span class="heading">Name</span>
+        <span class="heading">Role</span>
+        <span class="heading">Company</span>
+        <span class="heading">Package</span>
+        <span class="heading">Action</span>
+      </div>
+
+      <div id="placementsContainer" class="placements-cards"></div>
+    </section>
 
     <!-- TRAINING -->
     <section id="training" class="panel">
-  <h2>Training</h2>
+      <h2>Training</h2>
 
-  <div class="form">
-    <input id="t1" placeholder="FontAwesome Icon (e.g. fas fa-cloud)">
-    <input id="t2" placeholder="Training Name">
-    <button id="addBtnTraining" onclick="addTraining()">Add</button>
-  </div>
+      <div class="form">
+        <input id="t1" placeholder="FontAwesome Icon (e.g. fas fa-cloud)">
+        <input id="t2" placeholder="Training Name">
+        <button id="addBtnTraining" onclick="addTraining()">Add</button>
+      </div>
 
-  <div class="training-headings" style="display: flex; font-weight: bold; padding: 10px; border-bottom: 2px solid #ccc;">
-    <span class="heading" style="flex: 1;">Icon</span>
-    <span class="heading" style="flex: 2;">Training Name</span>
-    <span class="heading" style="flex: 1;">Action</span>
-  </div>
+      <div class="training-headings"
+        style="display: flex; font-weight: bold; padding: 10px; border-bottom: 2px solid #ccc;">
+        <span class="heading" style="flex: 1;">Icon</span>
+        <span class="heading" style="flex: 2;">Training Name</span>
+        <span class="heading" style="flex: 1;">Action</span>
+      </div>
 
-  <div id="trainingTable" class="training-cards"></div>
-</section>
+      <div id="trainingTable" class="training-cards"></div>
+    </section>
 
     <!-- CONTACT -->
     <section id="contact" class="panel">
@@ -166,7 +167,7 @@
       <!-- Contact Cards Container -->
       <div id="contactTable" class="contact-cards"></div>
     </section>
-    
+
   </main>
   <script src="admin.js"></script>
 </body>

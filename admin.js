@@ -350,64 +350,88 @@ function clearInputs() {
 // JAVA COURSE JS (Vercel Ready)
 // ============================
 
-// 1. API URL badalnyat aali aahe (Java sathi navin endpoint)
-const JAVA_COURSE_API = `${BASE_URL}/api/java-courses`; 
+// IMPORTANT: BASE_URL define asel pahije
+// Example:
+// const BASE_URL = "https://your-backend.vercel.app";
+
+const JAVA_COURSE_API = `${BASE_URL}/api/java-courses`;
 let editingJavaCourseId = null;
 
+
 // ===============================
-// 1. DATA LOAD KARNE (Java Table)
+// 1. LOAD JAVA COURSES
 // ===============================
 async function loadJavaCourses() {
     try {
         const res = await fetch(JAVA_COURSE_API);
-        const courses = await res.json();
-        // HTML madhil table ID check kara (javaCoursesTable asava)
-        const table = document.getElementById("javaCoursesTable") || document.getElementById("coursesTable");
-        
+        const javaCoursesList = await res.json();
+
+        const table = document.getElementById("javaCoursesTable");
         if (!table) return;
+
         table.innerHTML = "";
 
-        if (!courses || courses.length === 0 || courses.error) {
-            table.innerHTML = `<tr><td colspan="3" style="text-align:center;">No Java courses found</td></tr>`;
+        if (!javaCoursesList || javaCoursesList.length === 0 || javaCoursesList.error) {
+            table.innerHTML = `
+                <tr>
+                    <td colspan="3" style="text-align:center;">
+                        No Java courses found
+                    </td>
+                </tr>`;
             return;
         }
 
-        courses.forEach(course => {
+        javaCoursesList.forEach(javaItem => {
             const row = document.createElement("tr");
-            row.dataset.id = course.id;
+            row.dataset.id = javaItem.id;
+
             row.innerHTML = `
-                <td class="course-duration">${course.duration2}</td> <td class="course-startdate">${course.start_date2}</td> <td>
-                    <button class="action-btn edit" onclick="editJavaCourse(this)" style="background:#ffc107; border:none; padding:5px 10px; cursor:pointer; border-radius:4px;">Edit</button>
-                    <button class="action-btn delete" onclick="deleteJavaCourse('${course.id}')" style="background:#dc3545; color:#fff; border:none; padding:5px 10px; cursor:pointer; border-radius:4px;">Delete</button>
+                <td class="course-duration">${javaItem.duration2}</td>
+                <td class="course-startdate">${javaItem.start_date2}</td>
+                <td>
+                    <button 
+                        class="action-btn edit" 
+                        onclick="editJavaCourse(this)"
+                        style="background:#ffc107;border:none;padding:5px 10px;cursor:pointer;border-radius:4px;">
+                        Edit
+                    </button>
+
+                    <button 
+                        class="action-btn delete" 
+                        onclick="deleteJavaCourse('${javaItem.id}')"
+                        style="background:#dc3545;color:#fff;border:none;padding:5px 10px;cursor:pointer;border-radius:4px;">
+                        Delete
+                    </button>
                 </td>
             `;
+
             table.appendChild(row);
         });
+
     } catch (err) {
         console.error("Java Course load error:", err);
     }
 }
 
+
 // ===============================
-// 2. DATA ADD KIWA UPDATE KARNE
+// 2. ADD / UPDATE JAVA COURSE
 // ===============================
 async function addJavaCourse() {
-    // ID names same thevle ahet pan requirement nusar badlu shakta
-    const durationInput = document.getElementById("courseDurationJava") || document.getElementById("courseDuration");
-    const startDateInput = document.getElementById("courseStartDateJava") || document.getElementById("courseStartDate");
-    
-    const submitBtn = document.querySelector("#courses .form button");
 
-    const duration2 = durationInput.value.trim(); // Java table column duration2
-    const start_date2 = startDateInput.value;      // Java table column start_date2
+    const durationInput = document.getElementById("courseDurationJava");
+    const startDateInput = document.getElementById("courseStartDateJava");
+    const submitBtn = document.querySelector("#java-courses .form button");
+
+    const duration2 = durationInput.value.trim();
+    const start_date2 = startDateInput.value;
 
     if (!duration2 || !start_date2) {
         alert("Krupaya sarva mahiti bhara!");
         return;
     }
 
-    // Payload madhe table column names duration2/start_date2 vaprave lagtil
-    const payload = { duration2, start_date2 };
+    const javaPayload = { duration2, start_date2 };
 
     try {
         if (submitBtn) {
@@ -416,36 +440,38 @@ async function addJavaCourse() {
         }
 
         let response;
+
         if (editingJavaCourseId) {
             // UPDATE
             response = await fetch(`${JAVA_COURSE_API}/${editingJavaCourseId}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload)
+                body: JSON.stringify(javaPayload)
             });
         } else {
-            // ADD NEW
+            // ADD
             response = await fetch(JAVA_COURSE_API, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload)
+                body: JSON.stringify(javaPayload)
             });
         }
 
         if (response.ok) {
             alert(editingJavaCourseId ? "Java Course Updated!" : "Java Course Added!");
-            
-            // Reset Form
+
             durationInput.value = "";
             startDateInput.value = "";
             editingJavaCourseId = null;
+
             if (submitBtn) submitBtn.innerText = "Add Java Course";
-            
-            loadJavaCourses(); 
+
+            loadJavaCourses();
         } else {
             const errorMsg = await response.json();
             alert("Error: " + (errorMsg.error || "Failed to save"));
         }
+
     } catch (err) {
         console.error("Save error:", err);
         alert("Server connection failed!");
@@ -454,42 +480,58 @@ async function addJavaCourse() {
     }
 }
 
+
 // ===============================
-// 3. EDIT SATHI FORM BHARNE
+// 3. EDIT JAVA COURSE
 // ===============================
 function editJavaCourse(btn) {
+
     const row = btn.closest("tr");
     editingJavaCourseId = row.dataset.id;
-    
-    const durationInput = document.getElementById("courseDurationJava") || document.getElementById("courseDuration");
-    const startDateInput = document.getElementById("courseStartDateJava") || document.getElementById("courseStartDate");
-    
+
+    const durationInput = document.getElementById("courseDurationJava");
+    const startDateInput = document.getElementById("courseStartDateJava");
+
     durationInput.value = row.querySelector(".course-duration").innerText;
-    startDateInput.value = row.querySelector(".course-startdate").innerText;
-    
-    const submitBtn = document.querySelector("#courses .form button");
+
+    // DATE SAFE FORMAT
+    const rawDate = row.querySelector(".course-startdate").innerText;
+    startDateInput.value = rawDate.split("T")[0];
+
+    const submitBtn = document.querySelector("#java-courses .form button");
     if (submitBtn) submitBtn.innerText = "Update Java Course";
 }
 
+
 // ===============================
-// 4. DATA DELETE KARNE
+// 4. DELETE JAVA COURSE
 // ===============================
 async function deleteJavaCourse(id) {
+
     if (!confirm("Haa Java course delete karaycha ka?")) return;
-    
+
     try {
-        const res = await fetch(`${JAVA_COURSE_API}/${id}`, { method: "DELETE" });
+        const res = await fetch(`${JAVA_COURSE_API}/${id}`, {
+            method: "DELETE"
+        });
+
         if (res.ok) {
             loadJavaCourses();
         } else {
             alert("Delete failed.");
         }
+
     } catch (err) {
         console.error("Delete error:", err);
     }
 }
 
+
+// ===============================
+// AUTO LOAD ON PAGE READY
+// ===============================
 document.addEventListener("DOMContentLoaded", loadJavaCourses);
+
 
 
 // ===============================

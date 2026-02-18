@@ -350,189 +350,86 @@ function clearInputs() {
 // JAVA COURSE JS (Vercel Ready)
 // ============================
 
-// IMPORTANT: BASE_URL define asel pahije
-// Example:
-// const BASE_URL = "https://your-backend.vercel.app";
+const JAVA_COURSES_API_URL = `${BASE_URL}/api/java-courses`;
+let currentCourseId = null; // Update sathi ID store karnyasathi
 
-const JAVA_COURSE_API = `${BASE_URL}/api/java-courses`;
-let editingJavaCourseId = null;
+// 1. Page load jhalya jhalya data fetch karne
+async function fetchJavaCourse() {
+    const res = await fetch(JAVA_COURSES_API_URL);
+    const data = await res.json();
+    
+    const tableBody = document.getElementById('javaCoursesTable');
+    tableBody.innerHTML = '';
 
+    if (data && data.length > 0) {
+        const course = data[0]; // Fakt pahila course ghene
+        currentCourseId = course.id;
 
-// ===============================
-// 1. LOAD JAVA COURSES
-// ===============================
-async function loadJavaCourses() {
-    try {
-        const res = await fetch(JAVA_COURSE_API);
-        const javaCoursesList = await res.json();
-
-        const table = document.getElementById("javaCoursesTable");
-        if (!table) return;
-
-        table.innerHTML = "";
-
-        if (!javaCoursesList || javaCoursesList.length === 0 || javaCoursesList.error) {
-            table.innerHTML = `
-                <tr>
-                    <td colspan="3" style="text-align:center;">
-                        No Java courses found
-                    </td>
-                </tr>`;
-            return;
-        }
-
-        javaCoursesList.forEach(javaItem => {
-            const row = document.createElement("tr");
-            row.dataset.id = javaItem.id;
-
-            row.innerHTML = `
-                <td class="course-duration">${javaItem.duration2}</td>
-                <td class="course-startdate">${javaItem.start_date2}</td>
+        // Table madhe data dakhvane
+        tableBody.innerHTML = `
+            <tr>
+                <td>${course.duration2}</td>
+                <td>${course.start_date2}</td>
                 <td>
-                    <button 
-                        class="action-btn edit" 
-                        onclick="editJavaCourse(this)"
-                        style="background:#ffc107;border:none;padding:5px 10px;cursor:pointer;border-radius:4px;">
-                        Edit
-                    </button>
-
-                    <button 
-                        class="action-btn delete" 
-                        onclick="deleteJavaCourse('${javaItem.id}')"
-                        style="background:#dc3545;color:#fff;border:none;padding:5px 10px;cursor:pointer;border-radius:4px;">
-                        Delete
-                    </button>
+                    <button onclick="editJavaCourse('${course.duration2}', '${course.start_date2}')">Edit</button>
                 </td>
-            `;
-
-            table.appendChild(row);
-        });
-
-    } catch (err) {
-        console.error("Java Course load error:", err);
+            </tr>
+        `;
+        
+        // Button cha text badalne (Add ऐवजी Update karne)
+        const btn = document.querySelector("#java-courses button");
+        btn.innerText = "Update Java Course";
+        btn.onclick = updateJavaCourse;
     }
 }
 
-
-// ===============================
-// 2. ADD / UPDATE JAVA COURSE
-// ===============================
+// 2. Navin Course Add karne (One-Time)
 async function addJavaCourse() {
+    const duration2 = document.getElementById('courseDurationJava').value;
+    const start_date2 = document.getElementById('courseStartDateJava').value;
 
-    const durationInput = document.getElementById("courseDurationJava");
-    const startDateInput = document.getElementById("courseStartDateJava");
-    const submitBtn = document.querySelector("#java-courses .form button");
+    const res = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ duration2, start_date2 })
+    });
 
-    const duration2 = durationInput.value.trim();
-    const start_date2 = startDateInput.value;
-
-    if (!duration2 || !start_date2) {
-        alert("Krupaya sarva mahiti bhara!");
-        return;
-    }
-
-    const javaPayload = { duration2, start_date2 };
-
-    try {
-        if (submitBtn) {
-            submitBtn.disabled = true;
-            submitBtn.innerText = "Saving...";
-        }
-
-        let response;
-
-        if (editingJavaCourseId) {
-            // UPDATE
-            response = await fetch(`${JAVA_COURSE_API}/${editingJavaCourseId}`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(javaPayload)
-            });
-        } else {
-            // ADD
-            response = await fetch(JAVA_COURSE_API, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(javaPayload)
-            });
-        }
-
-        if (response.ok) {
-            alert(editingJavaCourseId ? "Java Course Updated!" : "Java Course Added!");
-
-            durationInput.value = "";
-            startDateInput.value = "";
-            editingJavaCourseId = null;
-
-            if (submitBtn) submitBtn.innerText = "Add Java Course";
-
-            loadJavaCourses();
-        } else {
-            const errorMsg = await response.json();
-            alert("Error: " + (errorMsg.error || "Failed to save"));
-        }
-
-    } catch (err) {
-        console.error("Save error:", err);
-        alert("Server connection failed!");
-    } finally {
-        if (submitBtn) submitBtn.disabled = false;
+    if (res.ok) {
+        alert("Course added successfully!");
+        fetchJavaCourse();
     }
 }
 
-
-// ===============================
-// 3. EDIT JAVA COURSE
-// ===============================
-function editJavaCourse(btn) {
-
-    const row = btn.closest("tr");
-    editingJavaCourseId = row.dataset.id;
-
-    const durationInput = document.getElementById("courseDurationJava");
-    const startDateInput = document.getElementById("courseStartDateJava");
-
-    durationInput.value = row.querySelector(".course-duration").innerText;
-
-    // DATE SAFE FORMAT
-    const rawDate = row.querySelector(".course-startdate").innerText;
-    startDateInput.value = rawDate.split("T")[0];
-
-    const submitBtn = document.querySelector("#java-courses .form button");
-    if (submitBtn) submitBtn.innerText = "Update Java Course";
+// 3. Edit mode chalu karne (Fields madhe data bharne)
+function editJavaCourse(duration, date) {
+    document.getElementById('courseDurationJava').value = duration;
+    document.getElementById('courseStartDateJava').value = date;
 }
 
+// 4. Existing Course Update karne
+async function updateJavaCourse() {
+    if (!currentCourseId) return;
 
-// ===============================
-// 4. DELETE JAVA COURSE
-// ===============================
-async function deleteJavaCourse(id) {
+    const duration2 = document.getElementById('courseDurationJava').value;
+    const start_date2 = document.getElementById('courseStartDateJava').value;
 
-    if (!confirm("Haa Java course delete karaycha ka?")) return;
+    const res = await fetch(`${API_URL}/${currentCourseId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ duration2, start_date2 })
+    });
 
-    try {
-        const res = await fetch(`${JAVA_COURSE_API}/${id}`, {
-            method: "DELETE"
-        });
-
-        if (res.ok) {
-            loadJavaCourses();
-        } else {
-            alert("Delete failed.");
-        }
-
-    } catch (err) {
-        console.error("Delete error:", err);
+    if (res.ok) {
+        alert("Course updated successfully!");
+        fetchJavaCourse(); // Table refresh karne
+        // Fields empty karne
+        document.getElementById('courseDurationJava').value = '';
+        document.getElementById('courseStartDateJava').value = '';
     }
 }
 
-
-// ===============================
-// AUTO LOAD ON PAGE READY
-// ===============================
-document.addEventListener("DOMContentLoaded", loadJavaCourses);
-
-
+// Page load hताना function call karne
+fetchJavaCourse();
 
 // ===============================
 // TRAINING SECTION ADMIN JS

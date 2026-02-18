@@ -350,59 +350,54 @@ function clearInputs() {
 // JAVA COURSE JS (Vercel Ready)
 // ============================
 
-const JAVA_SYNC_API = `${BASE_URL}/api/java-courses`;
+const JAVA_URL = `${BASE_URL}/api/java-courses`;
 
-// 1. Load Data on Startup
-async function syncJavaFrontend() {
+// 1. LOAD DATA ON PAGE OPEN
+async function fetchJavaData() {
     try {
-        const res = await fetch(JAVA_SYNC_API);
+        const res = await fetch(JAVA_URL);
         const data = await res.json();
 
         if (data && data.id) {
-            // UI Inputs madhe data bharne
+            // Inputs madhe value bharne
             document.getElementById('java_db_id').value = data.id;
             document.getElementById('java_duration_input').value = data.duration2;
             document.getElementById('java_start_date_input').value = data.start_date2;
             
-            // Table madhe dakhvne
-            const tableBody = document.getElementById('java_table_body');
-            tableBody.innerHTML = `
+            // Table update karne
+            document.getElementById('java_table_body').innerHTML = `
                 <tr>
                     <td>${data.duration2}</td>
                     <td>${data.start_date2}</td>
-                    <td><span style="color: green; font-weight: bold;">Live on Website</span></td>
+                    <td><b style="color:green">Active</b></td>
                 </tr>`;
             document.getElementById('java_submit_btn').innerText = "Update Java Course";
         }
     } catch (err) {
-        console.error("Load Error:", err);
+        console.log("Fetch error:", err);
     }
 }
 
-// 2. Add / Update (The 'One-Time' Logic)
-async function processJavaCourseSubmit() {
-    const javaId = document.getElementById('java_db_id').value;
+// 2. SAVE BUTTON CLICK
+async function submitJavaCourseForm() {
+    const id = document.getElementById('java_db_id').value;
     const dur = document.getElementById('java_duration_input').value.trim();
     const sDate = document.getElementById('java_start_date_input').value;
     const btn = document.getElementById('java_submit_btn');
 
     if (!dur || !sDate) {
-        alert("Krupaya sagle fields bhara!");
+        alert("Durations ani Date bharne garjeche aahe!");
         return;
     }
 
-    const payload = { 
-        id: javaId || null, 
-        duration2: dur, 
-        start_date2: sDate 
-    };
+    const payload = { id: id || null, duration2: dur, start_date2: sDate };
 
     try {
+        btn.innerText = "Syncing with Database...";
         btn.disabled = true;
-        btn.innerText = "Connecting to Database..."; // Message for user
 
-        const res = await fetch(JAVA_SYNC_API, {
-            method: "POST", // Apan single route vaprtoy save sathi
+        const res = await fetch(JAVA_URL, {
+            method: "POST", // Apan single route vaprtoy
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload)
         });
@@ -410,22 +405,21 @@ async function processJavaCourseSubmit() {
         const result = await res.json();
 
         if (res.ok) {
-            alert(result.message); // SUCCESS MESSAGE
-            syncJavaFrontend(); // UI Refresh kara
+            alert(result.message); // Confirmation message
+            fetchJavaData(); // Frontend Refresh
         } else {
-            alert("Database Error: " + result.error);
+            alert("Error: " + result.error);
         }
     } catch (err) {
-        console.error("Network Error:", err);
-        alert("Server sobat connection tutle aahe!");
+        alert("Backend connect hot nahiye!");
     } finally {
         btn.disabled = false;
-        btn.innerText = javaId ? "Update Java Course" : "Add Java Course";
+        btn.innerText = id ? "Update Java Course" : "Add Java Course";
     }
 }
 
-// Init
-document.addEventListener("DOMContentLoaded", syncJavaFrontend);
+// Startup call
+document.addEventListener("DOMContentLoaded", fetchJavaData);
 
 // ===============================
 // TRAINING SECTION ADMIN JS

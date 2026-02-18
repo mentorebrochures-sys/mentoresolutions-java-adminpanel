@@ -355,97 +355,108 @@ function clearInputs() {
 // ============================
 
 // 1. API URL Fix: Ithe '/api' add karne garjeche aahe
-const JAVA_API = `${BASE_URL}/api/java-courses`; 
+// 1. Unique Variable Name for API
+const JAVA_COURSE_SPECIFIC_API = `${BASE_URL}/api/java-courses`; 
 
 async function loadJavaCourseData() {
     try {
-        console.log("Fetching Java Course from:", JAVA_API); // Debugging sathi
-        const response = await fetch(JAVA_API);
-        const data = await response.json();
+        console.log("Fetching Java Course...");
+        const java_resp = await fetch(JAVA_COURSE_SPECIFIC_API);
+        const java_data = await java_resp.json();
         
-        const tableBody = document.getElementById('java_table_body');
-        const submitBtn = document.getElementById('java_submit_btn');
+        const java_tableBody = document.getElementById('java_table_body');
+        const java_submitBtn = document.getElementById('java_submit_btn');
         
-        if (!tableBody) return; // Error prevent karnyasaathi
-        tableBody.innerHTML = '';
+        if (!java_tableBody) return; 
+        java_tableBody.innerHTML = '';
 
-        if (data && data.length > 0) {
-            const course = data[0]; 
-            // Hidden input madhe ID bharne (Update sathi)
-            document.getElementById('java_db_id').value = course.id;
+        if (java_data && java_data.length > 0) {
+            // First record use kartoy karan table madhe ekach course info pahije
+            const current_java = java_data[0]; 
+            
+            // Hidden input madhe ID bharne
+            document.getElementById('java_db_id').value = current_java.id;
 
-            tableBody.innerHTML = `
+            java_tableBody.innerHTML = `
                 <tr>
-                    <td>${course.duration2}</td>
-                    <td>${course.start_date2}</td>
+                    <td>${current_java.duration2}</td>
+                    <td>${current_java.start_date2}</td>
                     <td>
-                        <button type="button" class="action-btn edit" onclick="setupJavaEdit('${course.id}', '${course.duration2}', '${course.start_date2}')">Edit</button>
+                        <button type="button" class="action-btn edit" 
+                            onclick="handleJavaEditClick('${current_java.id}', '${current_java.duration2}', '${current_java.start_date2}')">
+                            Edit
+                        </button>
                     </td>
                 </tr>
             `;
-            submitBtn.innerText = "Update Java Course";
+            java_submitBtn.innerText = "Update Java Course";
         } else {
-            submitBtn.innerText = "Add Java Course";
+            java_submitBtn.innerText = "Add Java Course";
         }
     } catch (error) {
-        console.error("Java Course Load Error:", error);
+        console.error("Java Fetch Error:", error);
     }
 }
 
-// 2. Edit Setup (Window object la connect kele aahe)
-window.setupJavaEdit = function(id, duration, date) {
-    document.getElementById('java_db_id').value = id;
-    document.getElementById('java_duration_input').value = duration;
-    document.getElementById('java_start_date_input').value = date;
+// 2. Unique Edit Function Name
+window.handleJavaEditClick = function(j_id, j_dur, j_date) {
+    document.getElementById('java_db_id').value = j_id;
+    document.getElementById('java_duration_input').value = j_dur;
+    document.getElementById('java_start_date_input').value = j_date;
     
     document.getElementById('java_submit_btn').innerText = "Update Java Course";
     document.getElementById('java_cancel_btn').style.display = "inline-block";
-    
-    // Scroll to top of form
     document.getElementById('java_duration_input').focus();
 };
 
-// 3. Process Add/Update
-async function processJavaCourse() {
-    const id = document.getElementById('java_db_id').value;
-    const duration2 = document.getElementById('java_duration_input').value.trim();
-    const start_date2 = document.getElementById('java_start_date_input').value;
+// 3. Unique Submit Process Function Name
+async function submitJavaCourseForm() {
+    const j_id = document.getElementById('java_db_id').value;
+    const j_duration2 = document.getElementById('java_duration_input').value.trim();
+    const j_start_date2 = document.getElementById('java_start_date_input').value;
 
-    if (!duration2 || !start_date2) {
-        alert("Please fill all details!");
+    if (!j_duration2 || !j_start_date2) {
+        alert("Java Course ची सर्व माहिती भरा!");
         return;
     }
 
-    const payload = { duration2, start_date2 };
-    const method = id ? "PUT" : "POST";
-    const url = id ? `${JAVA_API}/${id}` : JAVA_API;
+    // Payload keys match standard table: duration2, start_date2
+    const java_payload = { 
+        duration2: j_duration2, 
+        start_date2: j_start_date2 
+    };
+
+    const j_method = j_id ? "PUT" : "POST";
+    const j_url = j_id ? `${JAVA_COURSE_SPECIFIC_API}/${j_id}` : JAVA_COURSE_SPECIFIC_API;
 
     try {
-        const btn = document.getElementById('java_submit_btn');
-        btn.disabled = true;
-        btn.innerText = "Processing...";
+        const j_btn = document.getElementById('java_submit_btn');
+        j_btn.disabled = true;
+        j_btn.innerText = "Saving...";
 
-        const res = await fetch(url, {
-            method: method,
+        const j_res = await fetch(j_url, {
+            method: j_method,
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
+            body: JSON.stringify(java_payload)
         });
 
-        if (res.ok) {
-            alert(id ? "Updated!" : "Added!");
-            resetJavaUI();
+        if (j_res.ok) {
+            alert(j_id ? "Java Course Updated Successfully!" : "Java Course Added!");
+            clearJavaUIFields();
             loadJavaCourseData();
         } else {
-            alert("Error saving data");
+            const j_err = await j_res.json();
+            alert("Error: " + (j_err.error || "Save fail jhale"));
         }
     } catch (err) {
-        console.error("Save error:", err);
+        console.error("Java Save error:", err);
     } finally {
         document.getElementById('java_submit_btn').disabled = false;
+        if(!j_id) document.getElementById('java_submit_btn').innerText = "Add Java Course";
     }
 }
 
-function resetJavaUI() {
+function clearJavaUIFields() {
     document.getElementById('java_db_id').value = '';
     document.getElementById('java_duration_input').value = '';
     document.getElementById('java_start_date_input').value = '';
@@ -453,7 +464,7 @@ function resetJavaUI() {
     document.getElementById('java_cancel_btn').style.display = "none";
 }
 
-// Page load hताना call karnyasaathi (DOMContentLoaded madhe add kara)
+// Initialization
 document.addEventListener("DOMContentLoaded", () => {
     loadJavaCourseData();
 });

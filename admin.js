@@ -350,85 +350,97 @@ function clearInputs() {
 // JAVA COURSE JS (Vercel Ready)
 // ============================
 
-const JAVA_COURSES_API_URL = `${BASE_URL}/api/java-courses`;
-let currentCourseId = null; // Update sathi ID store karnyasathi
+const JAVA_API_URL = `${BASE_URL}/api/java-courses`; // Vercel var aslyamule relative path chalto
 
-// 1. Page load jhalya jhalya data fetch karne
+// 1. Data Fetch Karne
 async function fetchJavaCourse() {
-    const res = await fetch(JAVA_COURSES_API_URL);
-    const data = await res.json();
-    
-    const tableBody = document.getElementById('javaCoursesTable');
-    tableBody.innerHTML = '';
-
-    if (data && data.length > 0) {
-        const course = data[0]; // Fakt pahila course ghene
-        currentCourseId = course.id;
-
-        // Table madhe data dakhvane
-        tableBody.innerHTML = `
-            <tr>
-                <td>${course.duration2}</td>
-                <td>${course.start_date2}</td>
-                <td>
-                    <button onclick="editJavaCourse('${course.duration2}', '${course.start_date2}')">Edit</button>
-                </td>
-            </tr>
-        `;
+    try {
+        const res = await fetch(JAVA_API_URL);
+        const data = await res.json();
         
-        // Button cha text badalne (Add ऐवजी Update karne)
-        const btn = document.querySelector("#java-courses button");
-        btn.innerText = "Update Java Course";
-        btn.onclick = updateJavaCourse;
+        const tableBody = document.getElementById('javaCoursesTable');
+        const btn = document.getElementById('javaCourseBtn');
+        tableBody.innerHTML = '';
+
+        if (data && data.length > 0) {
+            const course = data[0]; // Fakt pahila record ghene
+            
+            // Hidden field madhe ID bharne
+            document.getElementById('javaCourseId').value = course.id;
+
+            tableBody.innerHTML = `
+                <tr>
+                    <td>${course.duration2}</td>
+                    <td>${course.start_date2}</td>
+                    <td>
+                        <button class="edit-btn" onclick="fillJavaForm('${course.id}', '${course.duration2}', '${course.start_date2}')">Edit</button>
+                    </td>
+                </tr>
+            `;
+            
+            // Button Update Mode madhe tanyasathi
+            btn.innerText = "Update Java Course";
+            btn.classList.add('update-mode'); 
+        } else {
+            btn.innerText = "Add Java Course";
+            btn.classList.remove('update-mode');
+        }
+    } catch (err) {
+        console.error("Error fetching course:", err);
     }
 }
 
-// 2. Navin Course Add karne (One-Time)
-async function addJavaCourse() {
-    const duration2 = document.getElementById('courseDurationJava').value;
-    const start_date2 = document.getElementById('courseStartDateJava').value;
-
-    const res = await fetch(API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ duration2, start_date2 })
-    });
-
-    if (res.ok) {
-        alert("Course added successfully!");
-        fetchJavaCourse();
-    }
-}
-
-// 3. Edit mode chalu karne (Fields madhe data bharne)
-function editJavaCourse(duration, date) {
+// 2. Form Fill Karne (Edit Click kelyavar)
+function fillJavaForm(id, duration, date) {
+    document.getElementById('javaCourseId').value = id;
     document.getElementById('courseDurationJava').value = duration;
     document.getElementById('courseStartDateJava').value = date;
 }
 
-// 4. Existing Course Update karne
-async function updateJavaCourse() {
-    if (!currentCourseId) return;
-
+// 3. Handle Add or Update
+async function handleJavaCourseSubmit() {
+    const id = document.getElementById('javaCourseId').value;
     const duration2 = document.getElementById('courseDurationJava').value;
     const start_date2 = document.getElementById('courseStartDateJava').value;
 
-    const res = await fetch(`${API_URL}/${currentCourseId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ duration2, start_date2 })
-    });
+    if (!duration2 || !start_date2) {
+        alert("Sagli mahiti bhara!");
+        return;
+    }
 
-    if (res.ok) {
-        alert("Course updated successfully!");
-        fetchJavaCourse(); // Table refresh karne
-        // Fields empty karne
-        document.getElementById('courseDurationJava').value = '';
-        document.getElementById('courseStartDateJava').value = '';
+    const payload = { duration2, start_date2 };
+    
+    // Jar ID asel tar PUT (Update), nasel tar POST (Create)
+    const method = id ? 'PUT' : 'POST';
+    const url = id ? `${JAVA_API_URL}/${id}` : JAVA_API_URL;
+
+    try {
+        const res = await fetch(url, {
+            method: method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+            alert(id ? "Course Updated!" : "Course Added!");
+            resetJavaForm();
+            fetchJavaCourse();
+        } else {
+            const errData = await res.json();
+            alert("Error: " + errData.error);
+        }
+    } catch (err) {
+        console.error("Submission error:", err);
     }
 }
 
-// Page load hताना function call karne
+function resetJavaForm() {
+    document.getElementById('javaCourseId').value = '';
+    document.getElementById('courseDurationJava').value = '';
+    document.getElementById('courseStartDateJava').value = '';
+}
+
+// Page load hताना call kara
 fetchJavaCourse();
 
 // ===============================

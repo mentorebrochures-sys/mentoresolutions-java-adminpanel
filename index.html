@@ -84,7 +84,33 @@
       </table>
     </section>
 
-    <!-- COURSES ADMIN PANEL -->
+    <section id="java-courses" class="panel" style="display: block !important;">
+  <h2>Manage Java Courses</h2>
+
+  <div class="form">
+    <input type="hidden" id="javaCourseId">
+    
+    <label>Duration:</label>
+    <input id="courseDurationJava" placeholder="e.g. 3 Months">
+    
+    <label>Start Date:</label>
+    <input id="courseStartDateJava" type="date">
+    
+    <button type="button" id="javaCourseBtn" onclick="handleJavaCourseSubmit()">Add Java Course</button>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Duration</th>
+        <th>Start Date</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody id="javaCoursesTable">
+      </tbody>
+  </table>
+</section>
    
 
 

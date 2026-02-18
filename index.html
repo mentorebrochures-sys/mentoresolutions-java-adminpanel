@@ -34,7 +34,7 @@
     <ul>
       <li onclick="showPanel('dashboard', this)"><i class="fa fa-chart-line"></i> Dashboard</li>
       <li onclick="showPanel('certificate', this)"><i class="fa fa-certificate"></i> Certificate</li>
-      <li onclick="showPanel('courses', this)"><i class="fa fa-book"></i> Courses</li>
+      <li onclick="showPanel('java-courses-section', this)"><i class="fa fa-book"></i> Courses</li>
       <li onclick="showPanel('placements', this)"><i class="fa fa-user-graduate"></i> Placements</li>
       <li onclick="showPanel('training', this)"><i class="fa fa-chalkboard"></i> Training</li>
       <li onclick="showPanel('contact', this)"><i class="fa fa-envelope"></i> Contact</li>
@@ -87,38 +87,38 @@
     <!-- courses -->
 
     <section id="java-courses-section" class="panel">
-  <h2>Manage Java Course</h2>
+      <h2>Manage Java Course</h2>
 
-  <div class="java-form-container" style="background: #f4f4f4; padding: 20px; margin-bottom: 20px;">
-    <input type="hidden" id="java_db_id"> 
-    
-    <div style="margin-bottom: 10px;">
-      <label>Duration:</label>
-      <input type="text" id="java_duration_input" placeholder="e.g. 3 Months" style="width: 100%;">
-    </div>
+      <div class="java-form-container" style="background: #f4f4f4; padding: 20px; margin-bottom: 20px;">
+        <input type="hidden" id="java_db_id">
 
-    <div style="margin-bottom: 10px;">
-      <label>Start Date:</label>
-      <input type="date" id="java_start_date_input" style="width: 100%;">
-    </div>
-    
-    <button type="button" id="java_submit_btn" onclick="processJavaCourse()">Add Java Course</button>
-    <button type="button" id="java_cancel_btn" style="display:none;" onclick="resetJavaUI()">Cancel</button>
-  </div>
+        <div style="margin-bottom: 10px;">
+          <label>Duration:</label>
+          <input type="text" id="java_duration_input" placeholder="e.g. 3 Months" style="width: 100%;">
+        </div>
 
-  <table border="1" width="100%">
-    <thead>
-      <tr>
-        <th>Duration</th>
-        <th>Start Date</th>
-        <th>Action</th>
-      </tr>
-    </thead>
-    <tbody id="java_table_body">
-      </tbody>
-  </table>
-</section>
-   
+        <div style="margin-bottom: 10px;">
+          <label>Start Date:</label>
+          <input type="date" id="java_start_date_input" style="width: 100%;">
+        </div>
+
+        <button type="button" id="java_submit_btn" onclick="processJavaCourse()">Add Java Course</button>
+        <button type="button" id="java_cancel_btn" style="display:none;" onclick="resetJavaUI()">Cancel</button>
+      </div>
+
+      <table border="1" width="100%">
+        <thead>
+          <tr>
+            <th>Duration</th>
+            <th>Start Date</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="java_table_body">
+        </tbody>
+      </table>
+    </section>
+
 
 
 

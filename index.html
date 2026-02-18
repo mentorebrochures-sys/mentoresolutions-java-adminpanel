@@ -84,22 +84,29 @@
       </table>
     </section>
 
-    <section id="java-courses" class="panel" style="display: block !important;">
-  <h2>Manage Java Courses</h2>
+    <!-- courses -->
 
-  <div class="form">
-    <input type="hidden" id="javaCourseId">
+    <section id="java-courses-section" class="panel">
+  <h2>Manage Java Course</h2>
+
+  <div class="java-form-container" style="background: #f4f4f4; padding: 20px; margin-bottom: 20px;">
+    <input type="hidden" id="java_db_id"> 
     
-    <label>Duration:</label>
-    <input id="courseDurationJava" placeholder="e.g. 3 Months">
+    <div style="margin-bottom: 10px;">
+      <label>Duration:</label>
+      <input type="text" id="java_duration_input" placeholder="e.g. 3 Months" style="width: 100%;">
+    </div>
+
+    <div style="margin-bottom: 10px;">
+      <label>Start Date:</label>
+      <input type="date" id="java_start_date_input" style="width: 100%;">
+    </div>
     
-    <label>Start Date:</label>
-    <input id="courseStartDateJava" type="date">
-    
-    <button type="button" id="javaCourseBtn" onclick="handleJavaCourseSubmit()">Add Java Course</button>
+    <button type="button" id="java_submit_btn" onclick="processJavaCourse()">Add Java Course</button>
+    <button type="button" id="java_cancel_btn" style="display:none;" onclick="resetJavaUI()">Cancel</button>
   </div>
 
-  <table>
+  <table border="1" width="100%">
     <thead>
       <tr>
         <th>Duration</th>
@@ -107,7 +114,7 @@
         <th>Action</th>
       </tr>
     </thead>
-    <tbody id="javaCoursesTable">
+    <tbody id="java_table_body">
       </tbody>
   </table>
 </section>

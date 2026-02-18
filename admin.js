@@ -350,98 +350,98 @@ function clearInputs() {
 // JAVA COURSE JS (Vercel Ready)
 // ============================
 
-const JAVA_API_URL = `${BASE_URL}/api/java-courses`; // Vercel var aslyamule relative path chalto
+// API URL - server.js madhlya route pramane
+const JAVA_API = `${BASE_URL}/java-courses`;
 
-// 1. Data Fetch Karne
-async function fetchJavaCourse() {
+// 1. Database madhun data aanne (Fakt Java Course sathi)
+async function loadJavaCourseData() {
     try {
-        const res = await fetch(JAVA_API_URL);
-        const data = await res.json();
+        const response = await fetch(JAVA_API);
+        const data = await response.json();
         
-        const tableBody = document.getElementById('javaCoursesTable');
-        const btn = document.getElementById('javaCourseBtn');
+        const tableBody = document.getElementById('java_table_body');
+        const submitBtn = document.getElementById('java_submit_btn');
         tableBody.innerHTML = '';
 
         if (data && data.length > 0) {
-            const course = data[0]; // Fakt pahila record ghene
-            
-            // Hidden field madhe ID bharne
-            document.getElementById('javaCourseId').value = course.id;
-
+            // Jar data asel tar to UI madhe dakhva
+            const course = data[0]; 
             tableBody.innerHTML = `
                 <tr>
                     <td>${course.duration2}</td>
                     <td>${course.start_date2}</td>
                     <td>
-                        <button class="edit-btn" onclick="fillJavaForm('${course.id}', '${course.duration2}', '${course.start_date2}')">Edit</button>
+                        <button onclick="setupJavaEdit('${course.id}', '${course.duration2}', '${course.start_date2}')">Edit</button>
                     </td>
                 </tr>
             `;
             
-            // Button Update Mode madhe tanyasathi
-            btn.innerText = "Update Java Course";
-            btn.classList.add('update-mode'); 
+            // UI Update Mode madhe taka (One-time nantar Edit chya soyisathi)
+            submitBtn.innerText = "Update Java Course";
+            // Button cha function badalnyacha garaj nahi, logic internally handle karel
         } else {
-            btn.innerText = "Add Java Course";
-            btn.classList.remove('update-mode');
+            submitBtn.innerText = "Add Java Course";
         }
-    } catch (err) {
-        console.error("Error fetching course:", err);
+    } catch (error) {
+        console.error("Java Course Load Error:", error);
     }
 }
 
-// 2. Form Fill Karne (Edit Click kelyavar)
-function fillJavaForm(id, duration, date) {
-    document.getElementById('javaCourseId').value = id;
-    document.getElementById('courseDurationJava').value = duration;
-    document.getElementById('courseStartDateJava').value = date;
+// 2. Edit sathi form fill karne
+function setupJavaEdit(id, duration, date) {
+    document.getElementById('java_db_id').value = id;
+    document.getElementById('java_duration_input').value = duration;
+    document.getElementById('java_start_date_input').value = date;
+    
+    document.getElementById('java_submit_btn').innerText = "Update Java Course";
+    document.getElementById('java_cancel_btn').style.display = "inline-block";
 }
 
-// 3. Handle Add or Update
-async function handleJavaCourseSubmit() {
-    const id = document.getElementById('javaCourseId').value;
-    const duration2 = document.getElementById('courseDurationJava').value;
-    const start_date2 = document.getElementById('courseStartDateJava').value;
+// 3. Add kiwa Update logic (One-Time Create/Edit)
+async function processJavaCourse() {
+    const id = document.getElementById('java_db_id').value;
+    const duration2 = document.getElementById('java_duration_input').value;
+    const start_date2 = document.getElementById('java_start_date_input').value;
 
     if (!duration2 || !start_date2) {
-        alert("Sagli mahiti bhara!");
+        alert("Please fill all Java Course details!");
         return;
     }
 
-    const payload = { duration2, start_date2 };
+    const courseData = { duration2, start_date2 };
     
-    // Jar ID asel tar PUT (Update), nasel tar POST (Create)
-    const method = id ? 'PUT' : 'POST';
-    const url = id ? `${JAVA_API_URL}/${id}` : JAVA_API_URL;
+    // Jar ID asel tar PUT (Update), nasel tar POST (Add)
+    const requestType = id ? 'PUT' : 'POST';
+    const finalUrl = id ? `${JAVA_API}/${id}` : JAVA_API;
 
     try {
-        const res = await fetch(url, {
-            method: method,
+        const res = await fetch(finalUrl, {
+            method: requestType,
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
+            body: JSON.stringify(courseData)
         });
 
         if (res.ok) {
-            alert(id ? "Course Updated!" : "Course Added!");
-            resetJavaForm();
-            fetchJavaCourse();
-        } else {
-            const errData = await res.json();
-            alert("Error: " + errData.error);
+            alert(id ? "Java Course Updated!" : "Java Course Added!");
+            resetJavaUI();
+            loadJavaCourseData();
         }
     } catch (err) {
-        console.error("Submission error:", err);
+        console.error("Save error:", err);
     }
 }
 
-function resetJavaForm() {
-    document.getElementById('javaCourseId').value = '';
-    document.getElementById('courseDurationJava').value = '';
-    document.getElementById('courseStartDateJava').value = '';
+// 4. Form clear karne
+function resetJavaUI() {
+    document.getElementById('java_db_id').value = '';
+    document.getElementById('java_duration_input').value = '';
+    document.getElementById('java_start_date_input').value = '';
+    document.getElementById('java_submit_btn').innerText = "Add Java Course";
+    document.getElementById('java_cancel_btn').style.display = "none";
 }
 
-// Page load hताना call kara
-fetchJavaCourse();
+// Page load hताना fakt Java cha data load kara
+loadJavaCourseData();
 
 // ===============================
 // TRAINING SECTION ADMIN JS

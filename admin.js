@@ -21,7 +21,7 @@ window.onload = () => {
    GLOBAL VARIABLES
 ================================ */
 let editingRow = null;
-const BASE_URL = `https://mentoresolutions-devops-backend.vercel.app`;
+const BASE_URL = `https://mentoresolutions-java-backend.vercel.app`;
 
 /* ===============================
    SIDEBAR TOGGLE (MOBILE)
@@ -97,7 +97,6 @@ function editRow(btn) {
 // ===============================
 
 (() => {
-    // BASE_URL define kela asava (e.g., const BASE_URL = "http://localhost:5000")
     const API_URL = `${BASE_URL}/api/certificates`;
 
     document.addEventListener("DOMContentLoaded", () => {
@@ -353,9 +352,7 @@ function clearInputs() {
 // JAVA COURSE JS
 // ============================
 
-// Tumcha Java Subdomain cha URL ithe taka
-const JAVA_BASE_URL = "https://api-java.yourdomain.com"; 
-const JAVA_COURSE_API = `${JAVA_BASE_URL}/api/java-courses`;
+const JAVA_COURSE_API = `${BASE_URL}/api/java-courses`;
 let editingJavaCourseId = null;
 
 // ===============================

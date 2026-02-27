@@ -1,263 +1,1101 @@
-/* --- VARIABLES & RESET --- */
-:root {
-  --primary: #FEA501;
-  --primary-hover: #e69500;
-  --dark-bg: #121212;
-  --sidebar-bg: #1e1e1e;
-  --card-bg: #ffffff;
-  --text-main: #2d3436;
-  --text-light: #636e72;
-  --white: #ffffff;
-  --shadow-sm: 0 4px 6px rgba(0,0,0,0.05);
-  --shadow-md: 0 10px 15px rgba(0,0,0,0.1);
-  --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Poppins', sans-serif;
-}
-
-body {
-  background-color: #f0f2f5;
-  color: var(--text-main);
-  overflow-x: hidden;
-  display: flex;
-}
-
-/* --- ANIMATIONS --- */
-@keyframes slideIn {
-  from { opacity: 0; transform: translateX(-20px); }
-  to { opacity: 1; transform: translateX(0); }
-}
-
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
-}
-
-/* --- LOGIN SCREEN --- */
+/* ================= LOGIN SCREEN ================= */
 #loginScreen {
   position: fixed;
   inset: 0;
-  background: linear-gradient(135deg, #1e1e1e 0%, #000000 100%);
+  background: linear-gradient(135deg, #000, #1a1a1a, #000);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 9999;
+  animation: fadeIn 0.8s ease-in-out;
+  padding: 15px;
 }
 
+/* LOGIN CARD */
 .login-box {
-  background: var(--white);
-  padding: 40px;
-  border-radius: 20px;
-  width: 90%;
-  max-width: 400px;
+  background: #ffffff;
+  padding: 35px 30px;
+  width: 100%;
+  max-width: 360px;
+  border-radius: 16px;
   text-align: center;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-  animation: fadeInUp 0.6s ease-out;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
+  animation: slideUp 0.9s ease forwards;
+  transform: translateY(30px);
 }
 
-.login-box h2 { color: var(--primary); margin-bottom: 20px; }
+/* TITLE */
+.login-box h2 {
+  margin-bottom: 25px;
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--primary);
+  animation: pop 0.8s ease;
+}
 
+/* INPUTS */
 .login-box input {
   width: 100%;
-  padding: 12px;
-  margin: 10px 0;
-  border: 2px solid #eee;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+  border: 1px solid #ccc;
   border-radius: 10px;
-  transition: var(--transition);
+  font-size: 15px;
+  transition: all 0.3s ease;
 }
 
-.login-box input:focus { border-color: var(--primary); outline: none; }
+.login-box input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(254, 165, 1, 0.25);
+  transform: scale(1.02);
+}
 
-/* --- SIDEBAR --- */
+/* BUTTON */
+.login-box button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 5px;
+  background: var(--primary);
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 16px;
+  color: #000;
+  transition: all 0.3s ease;
+}
+
+.login-box button:hover {
+  background: #ffb733;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(254, 165, 1, 0.4);
+}
+
+.login-box button:active {
+  transform: scale(0.96);
+}
+
+/* ERROR */
+#loginError {
+  color: red;
+  margin-top: 12px;
+  font-size: 14px;
+  animation: shake 0.4s ease;
+}
+
+/* ================= ANIMATIONS ================= */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pop {
+  0%   { transform: scale(0.7); }
+  70%  { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  50% { transform: translateX(4px); }
+  75% { transform: translateX(-4px); }
+  100% { transform: translateX(0); }
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 480px) {
+  .login-box {
+    padding: 28px 22px;
+    border-radius: 14px;
+  }
+
+  .login-box h2 {
+    font-size: 22px;
+  }
+
+  .login-box input,
+  .login-box button {
+    font-size: 14px;
+    padding: 11px;
+  }
+}
+/* ================= ADMIN DASHBOARD ================= */
+:root {
+  --primary: #fea501;
+  --black: #000;
+  --red: #e63946;
+  --white: #fff;
+}
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Poppins;
+}
+body {
+  background: #f4f4f4;
+}
+/* SIDEBAR */
 .sidebar {
-  width: 280px;
-  height: 100vh;
-  background: var(--sidebar-bg);
   position: fixed;
   left: 0;
   top: 0;
-  color: white;
-  transition: var(--transition);
+  width: 250px;
+  height: 100vh;
+  background: var(--black);
+  color: var(--white);
+  padding: 20px;
+  transition: 0.4s;
   z-index: 1000;
-  box-shadow: 4px 0 15px rgba(0,0,0,0.1);
 }
-
 .sidebar h2 {
-  padding: 30px 20px;
-  text-align: center;
   color: var(--primary);
-  font-size: 1.5rem;
-  border-bottom: 1px solid #333;
+  text-align: center;
+  margin-bottom: 25px;
 }
-
-.sidebar ul { list-style: none; padding: 20px 10px; }
-
-.sidebar ul li {
-  padding: 15px 20px;
-  margin-bottom: 8px;
-  border-radius: 12px;
+.sidebar li {
+  list-style: none;
+  padding: 14px;
+  border-radius: 8px;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  transition: var(--transition);
-  color: #b2bec3;
+  transition: 0.3s;
+  margin-bottom: 14px; /* ✅ MORE SPACE BETWEEN LINKS */
 }
-
-.sidebar ul li i { margin-right: 15px; font-size: 1.1rem; }
-
-.sidebar ul li:hover, .sidebar ul li.active {
+.sidebar li:hover,
+.sidebar li.active {
   background: var(--primary);
-  color: white;
-  transform: translateX(10px);
+  color: var(--black);
 }
-
-.sidebar .logout {
-  margin-top: 40px;
-  color: #ff7675;
+.logout:hover {
+  background: var(--red) !important;
 }
-
-/* --- MAIN CONTENT --- */
+/* MAIN */
 .main {
-  flex: 1;
-  margin-left: 280px;
-  padding: 30px;
-  transition: var(--transition);
+  margin-left: 250px;
+  padding: 20px;
+  transition: 0.4s;
 }
-
 .topbar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  background: var(--white);
-  padding: 15px 30px;
-  border-radius: 15px;
-  margin-bottom: 30px;
-  box-shadow: var(--shadow-sm);
+  gap: 15px;
+  margin-bottom: 20px;
 }
-
 .menu-btn {
-  display: none;
   background: var(--primary);
   border: none;
-  color: white;
+  font-size: 20px;
   padding: 8px 12px;
-  border-radius: 5px;
   cursor: pointer;
 }
-
-/* --- STAT CARDS --- */
+/* PANELS */
+.panel {
+  display: none;
+  background: var(--white);
+  padding: 20px;
+  border-radius: 12px;
+  animation: fadeUp 0.4s ease;
+}
+.panel.show {
+  display: block;
+}
+/* STATS */
 .stats {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 20px;
-  margin-bottom: 40px;
 }
-
 .stat-card {
+  padding: 20px;
+  border-left: 6px solid var(--primary);
   background: var(--white);
-  padding: 30px;
-  border-radius: 20px;
-  box-shadow: var(--shadow-sm);
-  transition: var(--transition);
-  border-left: 5px solid var(--primary);
-  position: relative;
-  overflow: hidden;
+  border-radius: 10px;
 }
-
-.stat-card:hover {
-  transform: translateY(-10px);
-  box-shadow: var(--shadow-md);
-}
-
-.stat-card h3 { font-size: 0.9rem; color: var(--text-light); text-transform: uppercase; }
-.stat-card p { font-size: 2.2rem; font-weight: 700; margin-top: 5px; }
-
-/* --- FORM STYLING --- */
+/* FORM */
 .form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 10px;
+  margin: 15px 0;
+}
+.form input {
+  padding: 10px;
+  border: 1px solid #ccc;
+}
+.form button {
+  background: var(--primary);
+  border: none;
+  cursor: pointer;
+}
+/* TABLE */
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+th {
+  background: var(--black);
+  color: var(--white);
+}
+td,
+th {
+  padding: 10px;
+  text-align: center;
+}
+.action-btn {
+  padding: 6px 10px;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+}
+.edit {
+  background: var(--primary);
+}
+.delete {
+  background: var(--red);
+}
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+/* MOBILE */
+@media (max-width: 768px) {
+  .sidebar {
+    left: -250px;
+  }
+  .sidebar.open {
+    left: 0;
+  }
+  .main {
+    margin-left: 0;
+  }
+  /* 🔥 INCREASE ADD BUTTON HEIGHT ON MOBILE */
+  .form button {
+    height: 52px; /* increase height */
+    font-size: 16px; /* better readability */
+    border-radius: 10px; /* smooth look */
+  }
+}
+@media (max-width: 768px) {
+  .sidebar li {
+    padding: 18px; /* taller link */
+    margin-bottom: 18px; /* more gap */
+    font-size: 16px; /* easier to tap */
+  }
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+th,
+td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+.course-row img {
+  max-width: 120px;
+  border-radius: 6px;
+}
+.action-btn {
+  padding: 5px 10px;
+  margin-right: 5px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.action-btn.edit {
+  background-color: #4caf50;
+  color: white;
+}
+.action-btn.delete {
+  background-color: #f44336;
+  color: white;
+}
+/* ===============================
+   PLACEMENTS SECTION
+================================ */
+.placements-headings,
+.placement-card {
+  display: grid;
+  grid-template-columns: 80px 1.2fr 1.2fr 1.2fr 1fr 120px;
+  align-items: center;
+  gap: 10px;
+  grid-template-columns: repeat(6, 1fr); /* ✅ ALL SAME WIDTH */
+}
+/* Headings row */
+.placements-headings {
+  background: var(--black);
+  color: var(--white);
+  padding: 10px;
+  border-radius: 6px;
+  margin-top: 20px;
+  grid-template-columns: repeat(6, 1fr); /* ✅ ALL SAME WIDTH */
+}
+.placements-headings .heading {
+  font-weight: 600;
+  font-size: 14px;
+}
+/* Placement card */
+.placement-card {
   background: var(--white);
-  padding: 25px;
-  border-radius: 15px;
-  margin-bottom: 30px;
+  border: 1px solid #ddd;
+  padding: 10px;
+  border-radius: 8px;
+  margin-top: 10px;
+  animation: fadeUp 0.3s ease;
+}
+/* Cells */
+.placement-card .cell {
+  font-size: 14px;
+  color: var(--black);
+  word-break: break-word;
+}
+/* Image */
+.placement-img {
+  width: 65px;
+  height: auto;
+  border-radius: 6px;
+  object-fit: cover;
+}
+/* Action buttons */
+.placement-card .actions {
   display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
-  box-shadow: var(--shadow-sm);
-  animation: slideIn 0.5s ease;
+  gap: 8px;
+}
+.placement-card button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #fff;
+  font-size: 13px;
+}
+.placement-card button:first-child {
+  background: var(--primary);
+}
+.placement-card button:last-child {
+  background: var(--red);
+}
+
+/* Placements Section Panel */
+.panel {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+
+/* Form Styling */
+.form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 30px;
+    padding: 15px;
+    background: #f9f9f9;
+    border-radius: 6px;
 }
 
 .form input {
-  flex: 1;
-  min-width: 200px;
-  padding: 12px 15px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    flex: 1;
+    min-width: 150px;
 }
 
-button {
-  background: var(--primary);
-  color: white;
-  border: none;
-  padding: 12px 25px;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: var(--transition);
+#addBtn {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
 }
 
-button:hover {
-  background: var(--primary-hover);
-  transform: scale(1.05);
+#addBtn:hover {
+    background-color: #218838;
 }
 
-/* --- DATA TABLES / LISTS --- */
-.panel { display: none; }
-.panel.show { display: block; animation: fadeInUp 0.5s ease forwards; }
-
-table {
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 0 10px;
+/* Headings and Rows Structure (Grid Layout) */
+.placements-headings, .placement-item {
+    display: grid;
+    grid-template-columns: 80px 1.5fr 1fr 1fr 1fr 100px;
+    align-items: center;
+    padding: 12px;
+    gap: 15px;
+    border-bottom: 1px solid #eee;
 }
 
-table th { padding: 15px; text-align: left; color: var(--text-light); }
-
-table tr {
-  background: var(--white);
-  box-shadow: var(--shadow-sm);
-  transition: var(--transition);
+.placements-headings {
+    background-color: #343a40;
+    color: white;
+    border-radius: 4px 4px 0 0;
+    font-weight: bold;
+    text-align: left;
 }
 
-table tr:hover { transform: scale(1.01); }
-
-table td { padding: 15px; border-radius: 0; }
-table td:first-child { border-radius: 10px 0 0 10px; }
-table td:last-child { border-radius: 0 10px 10px 0; }
-
-/* --- RESPONSIVE DESIGN --- */
-@media (max-width: 1024px) {
-  .sidebar { width: 80px; }
-  .sidebar h2, .sidebar ul li span { display: none; }
-  .main { margin-left: 80px; }
+.heading {
+    font-size: 0.9rem;
+    text-transform: uppercase;
 }
 
+/* Data Cards/Rows */
+.placements-cards {
+    border: 1px solid #eee;
+    border-top: none;
+}
+
+.placement-item:hover {
+    background-color: #f8f9fa;
+}
+
+.placement-item img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 50%; /* फोटो गोल दिसावा म्हणून */
+    border: 1px solid #ddd;
+}
+
+.placement-item span {
+    font-size: 0.95rem;
+    color: #333;
+}
+
+/* Delete Button */
+.delete-btn {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    transition: 0.3s;
+}
+
+.delete-btn:hover {
+    background-color: #c82333;
+}
+
+/* Responsive (Mobile साठी) */
 @media (max-width: 768px) {
-  .menu-btn { display: block; }
-  .sidebar { left: -280px; width: 280px; }
-  .sidebar.active { left: 0; }
-  .sidebar h2, .sidebar ul li span { display: block; }
-  .main { margin-left: 0; padding: 15px; }
-  
-  .form { flex-direction: column; }
-  .form input { width: 100%; }
+    .placements-headings {
+        display: none; /* मोबाईलवर हेडिंग लपवा */
+    }
+    .placement-item {
+        grid-template-columns: 1fr 1fr;
+        height: auto;
+        gap: 10px;
+        border: 1px solid #eee;
+        margin-bottom: 10px;
+        border-radius: 8px;
+    }
+    .form {
+        flex-direction: column;
+    }
+}
+
+.inline-edit-input {
+    width: 100%;
+    padding: 5px;
+    border: 1px solid #ffc107;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.placement-item {
+    display: grid;
+    grid-template-columns: 80px 1fr 1fr 1fr 1fr 160px; /* रकान्यांची मांडणी */
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+/* ===============================
+   RESPONSIVE (MOBILE)
+================================ */
+@media (max-width: 768px) {
+  /* Hide table headings */
+  .placements-headings {
+    display: none;
+  }
+  /* Card layout for mobile */
+  .placement-card {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+  .placement-img {
+    width: 100%;
+    max-height: 180px;
+    object-fit: contain;
+  }
+  .placement-card .cell {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px dashed #ddd;
+  }
+  .placement-card .cell::before {
+    font-weight: 600;
+    color: #555;
+  }
+  .placement-name::before {
+    content: "Name";
+  }
+  .placement-role::before {
+    content: "Role";
+  }
+  .placement-company::before {
+    content: "Company";
+  }
+  .placement-package::before {
+    content: "Package";
+  }
+  .placement-card .actions {
+    border-bottom: none;
+    justify-content: flex-start;
+  }
+}
+
+/* Container आणि Row ची मांडणी */
+.placement-item {
+    display: grid;
+    grid-template-columns: 80px 1fr 1fr 1fr 1fr 160px; /* रकान्यांची अचूक विभागणी */
+    align-items: center;
+    gap: 15px;
+    padding: 12px;
+    background: #fff;
+    border-bottom: 1px solid #edf2f7;
+    transition: background 0.2s;
+}
+
+.placement-item:hover {
+    background: #f8fafc;
+}
+
+/* इमेज स्टाईल */
+.placement-item img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid #e2e8f0;
+}
+
+/* ॲक्शन बटन्सचे कंटेनर */
+.action-buttons {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-start;
+}
+
+/* --- EDIT BUTTON --- */
+.edit-btn {
+    background-color: #f59e0b; /* प्रॉपर गोल्डन-येलो */
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(245, 158, 11, 0.2);
+}
+
+.edit-btn:hover {
+    background-color: #d97706;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(217, 119, 6, 0.3);
+}
+
+/* --- SAVE BUTTON (Edit Mode मध्ये येते) --- */
+.save-btn {
+    background-color: #10b981; /* फ्रेश ग्रीन */
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.save-btn:hover {
+    background-color: #059669;
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+}
+
+/* --- CANCEL BUTTON (Edit Mode मध्ये येते) --- */
+.cancel-btn {
+    background-color: #64748b; /* मॅट ग्रे */
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.cancel-btn:hover {
+    background-color: #475569;
+}
+
+/* --- INLINE INPUTS (जेव्हा Edit क्लिक होते) --- */
+.inline-edit-input {
+    width: 100%;
+    padding: 8px;
+    border: 2px solid #f59e0b; /* एडिट मोडमध्ये पिवळी बॉर्डर */
+    border-radius: 6px;
+    font-size: 0.9rem;
+    background-color: #fffbeb; /* फिकट पिवळा बॅकग्राउंड */
+    color: #1e293b;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.inline-edit-input:focus {
+    border-color: #d97706;
+    background-color: #fff;
+}
+
+/* --- DELETE BUTTON --- */
+.delete-btn {
+    background-color: #ef4444; /* ब्राइट रेड */
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.delete-btn:hover {
+    background-color: #dc2626;
+}
+/* ===============================
+   TRAINING SECTION (Same as Placements)
+================================ */
+/* Headings row */
+.training-headings {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr); /* ✅ ALL SAME WIDTH */
+  align-items: center;
+  gap: 10px;
+  background: var(--black);
+  color: var(--white);
+  padding: 10px;
+  border-radius: 6px;
+  margin-top: 20px;
+  font-weight: 600;
+}
+.training-headings .heading {
+  font-weight: 600;
+  font-size: 14px;
+}
+/* Training Card */
+.training-card {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr); /* ✅ ALL SAME WIDTH */ /* Icon | Program | Actions */
+  align-items: center;
+  gap: 10px;
+  background: var(--white);
+  border: 1px solid #ddd;
+  padding: 10px;
+  border-radius: 8px;
+  margin-top: 10px;
+  animation: fadeUp 0.3s ease;
+}
+/* Cells */
+.training-card .cell {
+  font-size: 14px;
+  color: var(--black);
+  word-break: break-word;
+}
+/* Icon */
+.training-card .training-icon i {
+  font-size: 24px;
+  display: block;
+  width: 65px;
+  height: 65px;
+  text-align: center;
+  line-height: 65px;
+  border-radius: 6px;
+  background: #f4f4f4;
+}
+/* Action buttons */
+.training-card .actions {
+  display: flex;
+  gap: 8px;
+}
+.training-card button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #fff;
+  font-size: 13px;
+}
+.training-card button.edit {
+  background: #4caf50; /* green edit */
+}
+.training-card button.delete {
+  background: #f44336; /* red delete */
+}
+/* ===============================
+   RESPONSIVE (MOBILE)
+================================ */
+@media (max-width: 768px) {
+  /* Hide headings */
+  .training-headings {
+    display: none;
+  }
+  /* Card layout for mobile */
+  .training-card {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+  .training-card .cell {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px dashed #ddd;
+  }
+  .training-card .cell::before {
+    font-weight: 600;
+    color: #555;
+  }
+  .training-icon::before {
+    content: "Icon";
+  }
+  .training-title::before {
+    content: "Program";
+  }
+  .training-card .actions {
+    border-bottom: none;
+    justify-content: flex-start;
+  }
+  .training-card .training-icon i {
+    width: auto;
+    height: auto;
+    line-height: normal;
+    font-size: 28px;
+  }
+}
+/* Fade animation */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+/* ===============================
+   CONTACT CARDS (Same as Training)
+================================ */
+/* Headings row */
+.contact-headings {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr); /* Email | Mobile | Instagram | LinkedIn | Actions */
+  align-items: center;
+  gap: 10px;
+  background: var(--black);
+  color: var(--white);
+  padding: 10px;
+  border-radius: 6px;
+  margin-top: 20px;
+  font-weight: 600;
+}
+.contact-headings .heading {
+  font-weight: 600;
+  font-size: 14px;
+}
+/* Contact Card */
+.contact-card {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr); /* Email | Mobile | Instagram | LinkedIn | Actions */
+  align-items: center;
+  gap: 10px;
+  background: var(--white);
+  border: 1px solid #ddd;
+  padding: 10px;
+  border-radius: 8px;
+  margin-top: 10px;
+  animation: fadeUp 0.3s ease;
+}
+/* Cells */
+.contact-card .cell {
+  font-size: 14px;
+  color: var(--black);
+  word-break: break-word;
+}
+/* Action buttons */
+.contact-card .actions {
+  display: flex;
+  gap: 8px;
+}
+.contact-card button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #fff;
+  font-size: 13px;
+}
+.contact-card button.edit {
+  background: #4caf50; /* green edit */
+}
+.contact-card button.delete {
+  background: #f44336; /* red delete */
+}
+/* Fade animation */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+/* ===============================
+   RESPONSIVE (MOBILE)
+================================ */
+@media (max-width: 768px) {
+  /* Hide headings */
+  .contact-headings {
+    display: none;
+  }
+  /* Card layout for mobile */
+  .contact-card {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+  .contact-card .cell {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px dashed #ddd;
+  }
+  .contact-card .cell::before {
+    font-weight: 600;
+    color: #555;
+  }
+  .contact-email::before { content: "Email"; }
+  .contact-mobile::before { content: "Mobile"; }
+  .contact-instagram::before { content: "Instagram"; }
+  .contact-linkedin::before { content: "LinkedIn"; }
+  .contact-card .actions {
+    border-bottom: none;
+    justify-content: flex-start;
+  }
+}
+
+
+/* =========================
+certificate section
+========================= */
+
+/* Certificate Section Styling */
+/* Main Container Styling */
+#certificate {
+    background: #ffffff;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    margin-bottom: 2rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+#certificate h2 {
+    color: #333;
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    border-left: 5px solid #ff9800;
+    padding-left: 15px;
+}
+
+/* Form Section Styling */
+#certificate .form {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    align-items: center;
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    border: 1px dashed #ccc;
+}
+
+/* Custom File Input */
+#certImage {
+    flex: 1;
+    min-width: 250px;
+    padding: 10px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+/* Save Certificate Button */
+#addCertBtn {
+    padding: 12px 25px;
+    background: linear-gradient(135deg, #ff9800, #f57c00);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(245, 124, 0, 0.3);
+}
+
+#addCertBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(245, 124, 0, 0.4);
+    filter: brightness(1.1);
+}
+
+#addCertBtn:active {
+    transform: translateY(0);
+}
+
+/* Table Styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    overflow: hidden;
+    border-radius: 8px;
+    background: #fff;
+}
+
+thead {
+    background-color: #222;
+    color: #fff;
+}
+
+th, td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+tbody tr:hover {
+    background-color: #fff9f0;
+}
+
+/* Image Preview Styling */
+#certificateTable img {
+    width: 80px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    transition: transform 0.3s ease;
+    cursor: zoom-in;
+}
+
+#certificateTable img:hover {
+    transform: scale(2.0);
+    position: relative;
+    z-index: 10;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+/* Delete Button Modern Styling */
+/* या प्रकारे लिहा म्हणजे CSS नक्की लागू होईल */
+#certificateTable .delete-btn {
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(255, 77, 77, 0.2);
+    display: inline-block; /* हे महत्त्वाचे आहे */
+}
+
+#certificateTable .delete-btn:hover {
+    background-color: #e60000;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(230, 0, 0, 0.3);
+}
+
+/* Responsive Design for Mobile */
+@media (max-width: 768px) {
+    #certificate .form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    #addCertBtn {
+        width: 100%;
+    }
+
+    table, thead, tbody, th, td, tr {
+        display: block;
+    }
+
+    thead {
+        display: none; /* Hide header on mobile */
+    }
+
+    tr {
+        margin-bottom: 15px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 10px;
+        background: #fff;
+    }
+
+    td {
+        text-align: right;
+        padding-left: 50%;
+        position: relative;
+        min-height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        border-bottom: 1px solid #f1f1f1;
+    }
+
+    td:last-child {
+        border-bottom: none;
+    }
+
+    td::before {
+        content: attr(data-label); /* Important: requires data-label in HTML */
+        position: absolute;
+        left: 10px;
+        width: 45%;
+        font-weight: bold;
+        text-align: left;
+        color: #555;
+    }
 }

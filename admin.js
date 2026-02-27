@@ -125,7 +125,7 @@ function editRow(btn) {
                             <img src="${cert.image}" alt="Certificate" style="width: 100px; height: auto; border-radius: 4px;">
                         </td>
                         <td>
-                            <button type="button" onclick="deleteCert(${cert.id})">Delete</button>
+                            <button type="button" class="delete-btn" onclick="deleteCert(${cert.id})">Delete</button>
                         </td>
                     `;
                     certificateTable.appendChild(row);
@@ -484,143 +484,15 @@ async function deleteJavaCourse(id) {
 
 // Load data on page load
 document.addEventListener("DOMContentLoaded", loadJavaCourses);
+
+
 // ===============================
 // TRAINING SECTION ADMIN JS
 // ===============================
-const training_URL = `${BASE_URL}/api/trainings`;
-let editingTrainingId = null; 
+const TRAINING_API = `${BASE_URL}/api/trainings`;
+let editingTrainingId = null;
 
-// ================= LOAD ON PAGE LOAD =================
-document.addEventListener("DOMContentLoaded", loadTrainings);
-
-async function loadTrainings() {
-  try {
-    const res = await fetch(training_URL);
-    const data = await res.json();
-    const container = document.getElementById("trainingTable");
-    
-    if (!container) return;
-    container.innerHTML = "";
-
-    if (!data || data.length === 0) {
-      container.innerHTML = "<p style='text-align:center; width:100%; padding:20px;'>No trainings found.</p>";
-      return;
-    }
-
-    data.forEach(t => {
-      const card = document.createElement("div");
-      card.className = "training-card";
-      card.dataset.id = t.id;
-
-      card.innerHTML = `
-        <div class="cell training-icon" style="font-size: 24px; color: #007bff; text-align: center;">
-          <i class="${t.icon}"></i>
-        </div>
-        <div class="cell training-title" style="font-weight: bold;">${t.name}</div>
-        <div class="cell actions">
-          <button class="edit" onclick="editTraining(this)" style="background:#ffc107; border:none; padding:5px 10px; cursor:pointer; border-radius:4px; margin-right:5px;">Edit</button>
-          <button class="delete" onclick="deleteTraining(this)" style="background:#dc3545; color:#fff; border:none; padding:5px 10px; cursor:pointer; border-radius:4px;">Delete</button>
-        </div>
-      `;
-      container.appendChild(card);
-    });
-  } catch (err) {
-    console.error("Error loading trainings:", err);
-  }
-}
-
-// ================= ADD / UPDATE TRAINING =================
-document.getElementById("addBtnTraining").addEventListener("click", async (e) => {
-  e.preventDefault();
-  
-  const iconInput = document.getElementById("t1");
-  const titleInput = document.getElementById("t2");
-  const addBtn = document.getElementById("addBtnTraining");
-
-  const icon = iconInput.value.trim();
-  const name = titleInput.value.trim();
-
-  if (!icon || !name) {
-    alert("Please fill all fields (Icon class and Training Name)");
-    return;
-  }
-
-  const payload = { icon, name };
-
-  try {
-    addBtn.disabled = true;
-    addBtn.innerText = "Saving...";
-
-    let response;
-    if (editingTrainingId) {
-      // UPDATE
-      response = await fetch(`${training_URL}/${editingTrainingId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      });
-      editingTrainingId = null;
-    } else {
-      // ADD
-      response = await fetch(training_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      });
-    }
-
-    if (response.ok) {
-      iconInput.value = "";
-      titleInput.value = "";
-      addBtn.innerText = "Add";
-      loadTrainings();
-    } else {
-      alert("Failed to save training.");
-    }
-  } catch (err) {
-    console.error("Training save error:", err);
-    alert("Server error!");
-  } finally {
-    addBtn.disabled = false;
-    if (!editingTrainingId) addBtn.innerText = "Add";
-  }
-});
-
-// ================= EDIT =================
-// Note: 'btn' pass केला जातोय, त्यावरून आपण डेटा काढतो
-function editTraining(btn) {
-  const card = btn.closest(".training-card");
-  editingTrainingId = card.dataset.id;
-
-  document.getElementById("t1").value = card.querySelector(".training-icon i").className;
-  document.getElementById("t2").value = card.querySelector(".training-title").innerText;
-  
-  const addBtn = document.getElementById("addBtnTraining");
-  addBtn.innerText = "Update";
-  document.getElementById("t1").focus();
-}
-
-// ================= DELETE =================
-async function deleteTraining(btn) {
-  if (!confirm("Are you sure you want to delete this record?")) return;
-
-  const card = btn.closest(".training-card");
-  const id = card.dataset.id;
-
-  try {
-    const res = await fetch(`${training_URL}/${id}`, { method: "DELETE" });
-    if (res.ok) {
-      card.remove();
-      // जर लिस्ट पूर्ण रिकामी झाली तर रिफ्रेश करा
-      const container = document.getElementById("trainingTable");
-      if (container.children.length === 0) loadTrainings();
-    }
-  } catch (err) {
-    console.error("Delete error:", err);
-  }
-}const TRAINING_API = `${BASE_URL}/api/trainings`;
-
-// 1. DATA LOAD KARNE
+// ================= 1. DATA LOAD KARNE =================
 async function loadTrainings() {
     try {
         const res = await fetch(TRAINING_API);
@@ -631,22 +503,25 @@ async function loadTrainings() {
         container.innerHTML = "";
 
         if (!data || data.length === 0) {
-            container.innerHTML = `<p style="text-align:center; padding: 20px;">No trainings found.</p>`;
+            container.innerHTML = `<p style="text-align:center; width:100%; padding:20px;">No trainings found.</p>`;
             return;
         }
 
         data.forEach(t => {
             const card = document.createElement("div");
-            card.className = "training-card"; // Tumcha CSS class
-            card.style = "display: flex; align-items: center; padding: 10px; border-bottom: 1px solid #eee;";
+            card.className = "training-card";
+            card.dataset.id = t.id;
+            // Flexbox styling for alignment
+            card.style = "display: flex; align-items: center; padding: 10px; border-bottom: 1px solid #eee; background: #fff; margin-bottom: 5px;";
             
             card.innerHTML = `
-                <div style="flex: 1;"><i class="${t.icon}" style="font-size: 20px;"></i></div>
-                <div style="flex: 2;">${t.name}</div>
-                <div style="flex: 1;">
-                    <button onclick="deleteTraining('${t.id}')" style="background:#dc3545; color:white; border:none; padding:5px 10px; cursor:pointer; border-radius:4px;">Delete</button>
-                </div>
-            `;
+    <div data-label="Icon" class="training-icon"><i class="${t.icon}"></i></div>
+    <div data-label="Name" class="training-title">${t.name}</div>
+    <div class="actions">
+        <button class="edit" onclick="editTraining(this)">Edit</button>
+        <button class="delete" onclick="deleteTraining(this)">Delete</button>
+    </div>
+`;
             container.appendChild(card);
         });
     } catch (err) {
@@ -654,50 +529,81 @@ async function loadTrainings() {
     }
 }
 
-// 2. DATA ADD KARNE
-async function addTraining() {
+// ================= 2. ADD / UPDATE TRAINING =================
+async function handleTrainingSubmit() {
     const iconInput = document.getElementById("t1");
     const nameInput = document.getElementById("t2");
     const submitBtn = document.getElementById("addBtnTraining");
 
-    const payload = {
-        icon: iconInput.value.trim(),
-        name: nameInput.value.trim()
-    };
+    const icon = iconInput.value.trim();
+    const name = nameInput.value.trim();
 
-    if (!payload.icon || !payload.name) {
-        alert("Krupaya Icon class ani Name dohi bhara!");
+    if (!icon || !name) {
+        alert("Please enter both Icon class (e.g., fa-solid fa-cloud) and Name!");
         return;
     }
+
+    const payload = { icon, name };
 
     try {
         submitBtn.disabled = true;
         submitBtn.innerText = "Saving...";
 
-        const res = await fetch(TRAINING_API, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
-        });
+        let res;
+        if (editingTrainingId) {
+            // UPDATE Logic
+            res = await fetch(`${TRAINING_API}/${editingTrainingId}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+            editingTrainingId = null;
+        } else {
+            // ADD Logic
+            res = await fetch(TRAINING_API, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+        }
 
         if (res.ok) {
             iconInput.value = "";
             nameInput.value = "";
-            loadTrainings(); // Refresh list
+            submitBtn.innerText = "Add Training";
+            loadTrainings(); // Refresh the list
         } else {
-            alert("Database madhe save karta ale nahi.");
+            alert("Error while saving to database.");
         }
     } catch (err) {
-        console.error("Add error:", err);
+        console.error("Submit error:", err);
+        alert("Server connection failed!");
     } finally {
         submitBtn.disabled = false;
-        submitBtn.innerText = "Add";
+        if(!editingTrainingId) submitBtn.innerText = "Add Training";
     }
 }
 
-// 3. DELETE KARNE
+// ================= 3. EDIT LOGIC =================
+function editTraining(btn) {
+    const card = btn.closest(".training-card");
+    editingTrainingId = card.dataset.id;
+
+    // Icon class nit pick karne
+    const currentIconClass = card.querySelector(".training-icon i").className;
+    const currentName = card.querySelector(".training-title").innerText;
+
+    document.getElementById("t1").value = currentIconClass;
+    document.getElementById("t2").value = currentName;
+    
+    const addBtn = document.getElementById("addBtnTraining");
+    addBtn.innerText = "Update Training";
+    document.getElementById("t1").focus();
+}
+
+// ================= 4. DELETE LOGIC =================
 async function deleteTraining(id) {
-    if (!confirm("Hee training delete karaychi ka?")) return;
+    if (!confirm("Are you sure you want to delete this?")) return;
     try {
         const res = await fetch(`${TRAINING_API}/${id}`, { method: "DELETE" });
         if (res.ok) loadTrainings();
@@ -706,8 +612,19 @@ async function deleteTraining(id) {
     }
 }
 
-// INIT
-document.addEventListener("DOMContentLoaded", loadTrainings);
+// ================= INITIALIZE =================
+document.addEventListener("DOMContentLoaded", () => {
+    loadTrainings();
+    
+    // Add Event Listener to the button
+    const addBtn = document.getElementById("addBtnTraining");
+    if(addBtn) {
+        addBtn.addEventListener("click", (e) => {
+            e.preventDefault();
+            handleTrainingSubmit();
+        });
+    }
+});
 
 // ===============================
 // SINGLE CONTACT ADMIN JS

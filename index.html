@@ -5,12 +5,9 @@
   <meta charset="UTF-8">
   <title>Admin Panel</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Font Awesome CDN -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
     crossorigin="anonymous" />
 
-
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="admin.css">
 </head>
@@ -70,8 +67,8 @@
       <h2>Certificates</h2>
 
       <div class="form">
-        <input type="file" id="certImage" accept="image/*">
-        <button type="button" id="addCertBtn">Save Certificate</button>
+        <input type="file" class="cert-image-input" id="certImage" accept="image/*">
+        <button type="button" id="addCertBtn">Add Certificate</button>
       </div>
       <table>
         <thead>
@@ -140,7 +137,7 @@
       <div class="form">
         <input id="t1" placeholder="FontAwesome Icon (e.g. fas fa-cloud)">
         <input id="t2" placeholder="Training Name">
-        <button id="addBtnTraining" onclick="addTraining()">Add</button>
+        <button id="addBtnTraining" onclick="addTraining()">Add Training</button>
       </div>
 
       <div class="training-headings"

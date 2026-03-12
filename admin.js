@@ -348,7 +348,7 @@ function clearInputs() {
 // ============================
 // JAVA COURSE JS (Vercel Ready)
 // ============================
-     // ============================
+// ============================
 // JAVA COURSE JS
 // ============================
 
@@ -368,7 +368,7 @@ async function loadJavaCourses() {
         table.innerHTML = "";
 
         if (!courses || courses.length === 0 || courses.error) {
-            table.innerHTML = `<tr><td colspan="3" style="text-align:center;">No Java courses found</td></tr>`;
+            table.innerHTML = `<tr><td colspan="4" style="text-align:center;">No Java courses found</td></tr>`; // Updated colspan to 4
             return;
         }
 
@@ -378,7 +378,7 @@ async function loadJavaCourses() {
             row.innerHTML = `
                 <td class="java-course-duration">${course.duration}</td>
                 <td class="java-course-startdate">${course.start_date}</td>
-                <td>
+                <td class="java-course-batchtime">${course.batch_time || ''}</td> <td>
                     <button class="action-btn edit" onclick="editJavaCourse(this)" style="background:#ffc107; border:none; padding:5px 10px; cursor:pointer; border-radius:4px;">Edit</button>
                     <button class="action-btn delete" onclick="deleteJavaCourse('${course.id}')" style="background:#dc3545; color:#fff; border:none; padding:5px 10px; cursor:pointer; border-radius:4px;">Delete</button>
                 </td>
@@ -396,17 +396,19 @@ async function loadJavaCourses() {
 async function addJavaCourse() {
     const durationInput = document.getElementById("javaCourseDuration");
     const startDateInput = document.getElementById("javaCourseStartDate");
+    const batchTimeInput = document.getElementById("javaCourseBatchTime"); // Added reference
     const submitBtn = document.getElementById("javaSubmitBtn");
 
     const duration = durationInput.value.trim();
     const start_date = startDateInput.value;
+    const batch_time = batchTimeInput.value; // Added value
 
-    if (!duration || !start_date) {
+    if (!duration || !start_date || !batch_time) {
         alert("Krupaya Java course chi sarva mahiti bhara!");
         return;
     }
 
-    const payload = { duration, start_date };
+    const payload = { duration, start_date, batch_time }; // Added batch_time to payload
 
     try {
         submitBtn.disabled = true;
@@ -435,6 +437,7 @@ async function addJavaCourse() {
             // Reset Form
             durationInput.value = "";
             startDateInput.value = "";
+            batchTimeInput.value = ""; // Clear Batch Time
             editingJavaCourseId = null;
             submitBtn.innerText = "Add Java Course";
             
@@ -460,6 +463,7 @@ function editJavaCourse(btn) {
     
     document.getElementById("javaCourseDuration").value = row.querySelector(".java-course-duration").innerText;
     document.getElementById("javaCourseStartDate").value = row.querySelector(".java-course-startdate").innerText;
+    document.getElementById("javaCourseBatchTime").value = row.querySelector(".java-course-batchtime").innerText; // Added mapping
     
     document.getElementById("javaSubmitBtn").innerText = "Update Java Course";
 }

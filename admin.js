@@ -348,148 +348,54 @@ function clearInputs() {
 // ============================
 // JAVA COURSE JS (Vercel Ready)
 // ============================
-// ============================
-// JAVA COURSE JS - UPDATED
-// ============================
+// १. API URL बरोबर असल्याची खात्री करा
+const COURSE_API = `${BASE_URL}/api/java-courses`; 
 
-const JAVA_COURSE_API = `${BASE_URL}/api/java-courses`;
-let editingJavaCourseId = null;
+async function updateUpcomingBatch() {
+  try {
+    // Cache टाळण्यासाठी fetch मध्ये query parameter टाकला आहे
+    const res = await fetch(`${COURSE_API}?t=${new Date().getTime()}`);
+    const courses = await res.json();
+    
+    console.log("Dattbase कडून आलेला डेटा:", courses);
 
-// ===============================
-// 1. DATA LOAD KARNE (JAVA)
-// ===============================
-async function loadJavaCourses() {
-    try {
-        const res = await fetch(JAVA_COURSE_API);
-        const courses = await res.json();
-        const table = document.getElementById("javaCoursesTable");
-        
-        if (!table) return;
-        table.innerHTML = "";
-
-        if (!courses || courses.length === 0 || courses.error) {
-            table.innerHTML = `<tr><td colspan="4" style="text-align:center;">No Java courses found</td></tr>`;
-            return;
-        }
-
-        courses.forEach(course => {
-            const row = document.createElement("tr");
-            row.dataset.id = course.id;
-            row.innerHTML = `
-                <td class="java-course-startdate">${course.start_date}</td>
-                <td class="java-course-hours">${course.hours}</td>
-                <td class="java-course-batchtime">${course.batch_time}</td>
-                <td>
-                    <button class="action-btn edit" onclick="editJavaCourse(this)" style="background:#ffc107; border:none; padding:5px 10px; cursor:pointer; border-radius:4px;">Edit</button>
-                    <button class="action-btn delete" onclick="deleteJavaCourse('${course.id}')" style="background:#dc3545; color:#fff; border:none; padding:5px 10px; cursor:pointer; border-radius:4px;">Delete</button>
-                </td>
-            `;
-            table.appendChild(row);
-        });
-    } catch (err) {
-        console.error("Java Course load error:", err);
-    }
-}
-
-// ===============================
-// 2. DATA ADD KIWA UPDATE KARNE
-// ===============================
-async function addJavaCourse() {
-    const hoursInput = document.getElementById("javaCourseHours");
-    const batchTimeInput = document.getElementById("javaCourseBatchTime");
-    const startDateInput = document.getElementById("javaCourseStartDate");
-    const submitBtn = document.getElementById("javaSubmitBtn");
-
-    const hours = hoursInput.value.trim();
-    const batch_time = batchTimeInput.value.trim();
-    const start_date = startDateInput.value;
-
-    if (!hours || !batch_time || !start_date) {
-        alert("Krupaya Java course chi sarva mahiti bhara!");
+    if (!courses || !Array.isArray(courses) || courses.length === 0) {
+        console.warn("No course data available.");
         return;
     }
 
-    // New Payload matches the SQL table fields
-    const payload = { hours, batch_time, start_date };
+    // शेवटचा (Latest) कोर्स मिळवणे
+    const latest = courses[courses.length - 1];
+    
+    const courseInfo = document.querySelector("#courses .course-info");
+    
+    if (courseInfo && latest) {
+      const spans = courseInfo.querySelectorAll("span");
+      
+      // युझर पॅनेलमध्ये ३ स्पेन्स असल्याची खात्री करा
+      if (spans.length >= 3) {
+        
+        // १. Start Date (Property: start_date)
+        const startDate = latest.start_date ? formatDisplayDate(latest.start_date) : "TBA";
+        spans[0].innerHTML = `📅 New Batch Starting On : ${startDate}`;
+        
+        // २. Total Hours (Property: hours - जुन्या कोडमध्ये 'duration' असू शकते, ते 'hours' करा)
+        const hoursText = latest.hours ? latest.hours : "120 Hours";
+        spans[1].innerHTML = `⏰ Total Hours: ${hoursText}`;
 
-    try {
-        submitBtn.disabled = true;
-        submitBtn.innerText = "Saving...";
-
-        let response;
-        if (editingJavaCourseId) {
-            // UPDATE
-            response = await fetch(`${JAVA_COURSE_API}/${editingJavaCourseId}`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload)
-            });
-        } else {
-            // ADD NEW
-            response = await fetch(JAVA_COURSE_API, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload)
-            });
-        }
-
-        if (response.ok) {
-            alert(editingJavaCourseId ? "Java Course Updated!" : "Java Course Added Successfully!");
-            
-            // Reset Form
-            hoursInput.value = "";
-            batchTimeInput.value = "";
-            startDateInput.value = "";
-            editingJavaCourseId = null;
-            submitBtn.innerText = "Add Java Course";
-            
-            loadJavaCourses(); 
-        } else {
-            const errorMsg = await response.json();
-            alert("Error: " + (errorMsg.error || "Failed to save"));
-        }
-    } catch (err) {
-        console.error("Save error:", err);
-        alert("Java Server connection failed!");
-    } finally {
-        submitBtn.disabled = false;
+        // ३. Batch Time (Property: batch_time)
+        const batchTime = latest.batch_time ? latest.batch_time : "TBA";
+        spans[2].innerHTML = `🕒 Batch Time: ${batchTime}`;
+        
+        console.log("User Panel successfully updated!");
+      } else {
+        console.error("User Panel मध्ये ३ spans सापडले नाहीत. कृपया HTML तपासा.");
+      }
     }
+  } catch (err) {
+    console.error("User Panel fetch error:", err);
+  }
 }
-
-// ===============================
-// 3. EDIT SATHI FORM BHARNE
-// ===============================
-function editJavaCourse(btn) {
-    const row = btn.closest("tr");
-    editingJavaCourseId = row.dataset.id;
-    
-    // Mapping table cell content back to input fields
-    document.getElementById("javaCourseHours").value = row.querySelector(".java-course-hours").innerText;
-    document.getElementById("javaCourseBatchTime").value = row.querySelector(".java-course-batchtime").innerText;
-    document.getElementById("javaCourseStartDate").value = row.querySelector(".java-course-startdate").innerText;
-    
-    document.getElementById("javaSubmitBtn").innerText = "Update Java Course";
-}
-
-// ===============================
-// 4. DATA DELETE KARNE
-// ===============================
-async function deleteJavaCourse(id) {
-    if (!confirm("Haa Java course delete karaycha ka?")) return;
-    
-    try {
-        const res = await fetch(`${JAVA_COURSE_API}/${id}`, { method: "DELETE" });
-        if (res.ok) {
-            loadJavaCourses();
-        } else {
-            alert("Delete failed.");
-        }
-    } catch (err) {
-        console.error("Delete error:", err);
-    }
-}
-
-document.addEventListener("DOMContentLoaded", loadJavaCourses);
 
 
 // ===============================

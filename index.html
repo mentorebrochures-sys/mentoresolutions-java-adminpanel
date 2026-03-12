@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <title>Admin Panel</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  crossorigin="anonymous" />
+    crossorigin="anonymous" />
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -87,21 +87,16 @@
       <h2> Manage New Batch</h2>
 
       <div class="form">
-        <input id="javaCourseHours" placeholder="Total Hours (e.g. 120 Hours)">
-
-        <input id="javaCourseBatchTime" placeholder="Batch Time (e.g. 6:00 PM - 8:00 PM)">
-
+        <input id="javaCourseDuration" placeholder="Total Duration (e.g. 3 Months)">
         <input id="javaCourseStartDate" type="date" placeholder="Start Date">
-
         <button id="javaSubmitBtn" onclick="addJavaCourse()">Add batch</button>
       </div>
 
       <table>
         <thead>
           <tr>
+            <th>Duration</th>
             <th>Start Date</th>
-            <th>Total Hours</th>
-            <th>Batch Time</th>
             <th>Action</th>
           </tr>
         </thead>

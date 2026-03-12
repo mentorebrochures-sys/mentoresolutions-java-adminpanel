@@ -352,10 +352,6 @@ function clearInputs() {
 // JAVA COURSE JS
 // ============================
 
-// ============================
-// JAVA COURSE JS - UPDATED
-// ============================
-
 const JAVA_COURSE_API = `${BASE_URL}/api/java-courses`;
 let editingJavaCourseId = null;
 
@@ -372,7 +368,7 @@ async function loadJavaCourses() {
         table.innerHTML = "";
 
         if (!courses || courses.length === 0 || courses.error) {
-            table.innerHTML = `<tr><td colspan="4" style="text-align:center;">No Java courses found</td></tr>`;
+            table.innerHTML = `<tr><td colspan="3" style="text-align:center;">No Java courses found</td></tr>`;
             return;
         }
 
@@ -380,9 +376,8 @@ async function loadJavaCourses() {
             const row = document.createElement("tr");
             row.dataset.id = course.id;
             row.innerHTML = `
+                <td class="java-course-duration">${course.duration}</td>
                 <td class="java-course-startdate">${course.start_date}</td>
-                <td class="java-course-hours">${course.hours || ""}</td>
-                <td class="java-course-batchtime">${course.batch_time || ""}</td>
                 <td>
                     <button class="action-btn edit" onclick="editJavaCourse(this)" style="background:#ffc107; border:none; padding:5px 10px; cursor:pointer; border-radius:4px;">Edit</button>
                     <button class="action-btn delete" onclick="deleteJavaCourse('${course.id}')" style="background:#dc3545; color:#fff; border:none; padding:5px 10px; cursor:pointer; border-radius:4px;">Delete</button>
@@ -399,23 +394,19 @@ async function loadJavaCourses() {
 // 2. DATA ADD KIWA UPDATE KARNE
 // ===============================
 async function addJavaCourse() {
-    // HTML मधील बरोबर ID वापरणे
-    const hoursInput = document.getElementById("javaCourseHours");
-    const batchTimeInput = document.getElementById("javaCourseBatchTime");
+    const durationInput = document.getElementById("javaCourseDuration");
     const startDateInput = document.getElementById("javaCourseStartDate");
     const submitBtn = document.getElementById("javaSubmitBtn");
 
-    const hours = hoursInput.value.trim();
-    const batch_time = batchTimeInput.value.trim();
+    const duration = durationInput.value.trim();
     const start_date = startDateInput.value;
 
-    if (!hours || !batch_time || !start_date) {
+    if (!duration || !start_date) {
         alert("Krupaya Java course chi sarva mahiti bhara!");
         return;
     }
 
-    // Backend Controller नुसार Payload
-    const payload = { start_date, hours, batch_time };
+    const payload = { duration, start_date };
 
     try {
         submitBtn.disabled = true;
@@ -423,14 +414,14 @@ async function addJavaCourse() {
 
         let response;
         if (editingJavaCourseId) {
-            // UPDATE (PUT)
+            // UPDATE
             response = await fetch(`${JAVA_COURSE_API}/${editingJavaCourseId}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload)
             });
         } else {
-            // ADD NEW (POST)
+            // ADD NEW
             response = await fetch(JAVA_COURSE_API, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -441,12 +432,11 @@ async function addJavaCourse() {
         if (response.ok) {
             alert(editingJavaCourseId ? "Java Course Updated!" : "Java Course Added Successfully!");
             
-            // Form Reset करणे
-            hoursInput.value = "";
-            batchTimeInput.value = "";
+            // Reset Form
+            durationInput.value = "";
             startDateInput.value = "";
             editingJavaCourseId = null;
-            submitBtn.innerText = "Add batch";
+            submitBtn.innerText = "Add Java Course";
             
             loadJavaCourses(); 
         } else {
@@ -468,10 +458,8 @@ function editJavaCourse(btn) {
     const row = btn.closest("tr");
     editingJavaCourseId = row.dataset.id;
     
-    // टेबलमधील डेटा पुन्हा इनपुट बॉक्समध्ये भरणे
+    document.getElementById("javaCourseDuration").value = row.querySelector(".java-course-duration").innerText;
     document.getElementById("javaCourseStartDate").value = row.querySelector(".java-course-startdate").innerText;
-    document.getElementById("javaCourseHours").value = row.querySelector(".java-course-hours").innerText;
-    document.getElementById("javaCourseBatchTime").value = row.querySelector(".java-course-batchtime").innerText;
     
     document.getElementById("javaSubmitBtn").innerText = "Update Java Course";
 }
@@ -493,6 +481,9 @@ async function deleteJavaCourse(id) {
         console.error("Delete error:", err);
     }
 }
+
+// Load data on page load
+document.addEventListener("DOMContentLoaded", loadJavaCourses);
 
 
 // ===============================

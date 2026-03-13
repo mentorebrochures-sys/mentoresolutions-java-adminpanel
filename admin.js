@@ -346,10 +346,7 @@ function clearInputs() {
 
 
 // ============================
-// JAVA COURSE JS (Vercel Ready)
-// ============================
-     // ============================
-// JAVA COURSE JS
+// JAVA COURSE JS (Updated with Batch Time)
 // ============================
 
 const JAVA_COURSE_API = `${BASE_URL}/api/java-courses`;
@@ -368,7 +365,7 @@ async function loadJavaCourses() {
         table.innerHTML = "";
 
         if (!courses || courses.length === 0 || courses.error) {
-            table.innerHTML = `<tr><td colspan="3" style="text-align:center;">No Java courses found</td></tr>`;
+            table.innerHTML = `<tr><td colspan="4" style="text-align:center;">No Java courses found</td></tr>`;
             return;
         }
 
@@ -378,6 +375,7 @@ async function loadJavaCourses() {
             row.innerHTML = `
                 <td class="java-course-duration">${course.duration}</td>
                 <td class="java-course-startdate">${course.start_date}</td>
+                <td class="java-course-time">${course.batch_time || "N/A"}</td>
                 <td>
                     <button class="action-btn edit" onclick="editJavaCourse(this)" style="background:#ffc107; border:none; padding:5px 10px; cursor:pointer; border-radius:4px;">Edit</button>
                     <button class="action-btn delete" onclick="deleteJavaCourse('${course.id}')" style="background:#dc3545; color:#fff; border:none; padding:5px 10px; cursor:pointer; border-radius:4px;">Delete</button>
@@ -396,17 +394,20 @@ async function loadJavaCourses() {
 async function addJavaCourse() {
     const durationInput = document.getElementById("javaCourseDuration");
     const startDateInput = document.getElementById("javaCourseStartDate");
+    const batchTimeInput = document.getElementById("javaCourseTime"); // नवीन इनपुट
     const submitBtn = document.getElementById("javaSubmitBtn");
 
     const duration = durationInput.value.trim();
     const start_date = startDateInput.value;
+    const batch_time = batchTimeInput.value.trim(); // नवीन व्हॅल्यू
 
-    if (!duration || !start_date) {
-        alert("Krupaya Java course chi sarva mahiti bhara!");
+    if (!duration || !start_date || !batch_time) {
+        alert("Krupaya Java course chi sarva mahiti bhara (Duration, Date ani Time)!");
         return;
     }
 
-    const payload = { duration, start_date };
+    // पेलोडमध्ये batch_time ॲड केला आहे
+    const payload = { duration, start_date, batch_time };
 
     try {
         submitBtn.disabled = true;
@@ -435,8 +436,9 @@ async function addJavaCourse() {
             // Reset Form
             durationInput.value = "";
             startDateInput.value = "";
+            batchTimeInput.value = ""; // टाइम रिसेट
             editingJavaCourseId = null;
-            submitBtn.innerText = "Add Java Course";
+            submitBtn.innerText = "Add batch";
             
             loadJavaCourses(); 
         } else {
@@ -460,6 +462,7 @@ function editJavaCourse(btn) {
     
     document.getElementById("javaCourseDuration").value = row.querySelector(".java-course-duration").innerText;
     document.getElementById("javaCourseStartDate").value = row.querySelector(".java-course-startdate").innerText;
+    document.getElementById("javaCourseTime").value = row.querySelector(".java-course-time").innerText; // टाइम फॉर्ममध्ये भरणे
     
     document.getElementById("javaSubmitBtn").innerText = "Update Java Course";
 }
@@ -482,7 +485,6 @@ async function deleteJavaCourse(id) {
     }
 }
 
-// Load data on page load
 document.addEventListener("DOMContentLoaded", loadJavaCourses);
 
 

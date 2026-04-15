@@ -803,7 +803,7 @@ async function loadPapSteps() {
         tableBody.innerHTML = ""; 
 
         if (!data || data.length === 0 || data.error) {
-            tableBody.innerHTML = "<tr><td colspan='4' style='text-align:center;'>No PAP steps found.</td></tr>";
+            tableBody.innerHTML = "<tr><td colspan='3' style='text-align:center;'>No PAP steps found.</td></tr>";
             return;
         }
 
@@ -813,7 +813,6 @@ async function loadPapSteps() {
             row.innerHTML = `
                 <td><strong>${step.title}</strong></td>
                 <td>${step.description}</td>
-                <td><span class="badge ${step.status}">${step.status.toUpperCase()}</span></td>
                 <td>
                     <button class="action-btn edit" onclick="editPapStep(this)" style="background:#ffc107; border:none; padding:5px 10px; cursor:pointer; border-radius:4px; margin-right:5px;">Edit</button>
                     <button class="action-btn delete" onclick="deletePapStep('${step.id}')" style="background:#dc3545; color:#fff; border:none; padding:5px 10px; cursor:pointer; border-radius:4px;">Delete</button>
@@ -830,19 +829,18 @@ async function loadPapSteps() {
 async function addPapStep() {
     const titleInput = document.getElementById("papTitle");
     const descInput = document.getElementById("papDescription");
-    const statusInput = document.getElementById("papStatus");
     const submitBtn = document.getElementById("papSubmitBtn");
 
     const title = titleInput.value.trim();
     const description = descInput.value.trim();
-    const status = statusInput.value;
 
     if (!title || !description) {
         alert("Please fill in both Title and Description!");
         return;
     }
 
-    const payload = { title, description, status };
+    // पेलोड मधून status काढून टाकले आहे
+    const payload = { title, description };
 
     try {
         submitBtn.disabled = true;
@@ -889,9 +887,7 @@ function editPapStep(btn) {
     document.getElementById("papTitle").value = row.cells[0].innerText;
     document.getElementById("papDescription").value = row.cells[1].innerText;
     
-    // Status badge मधून व्हॅल्यू सेट करणे
-    const currentStatus = row.cells[2].innerText.toLowerCase();
-    document.getElementById("papStatus").value = currentStatus;
+    // Status सेट करणारे लॉजिक काढून टाकले आहे
 
     document.getElementById("papSubmitBtn").innerText = "Update Step";
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -917,13 +913,9 @@ async function deletePapStep(id) {
 function resetPapForm() {
     document.getElementById("papTitle").value = "";
     document.getElementById("papDescription").value = "";
-    document.getElementById("papStatus").value = "normal";
     document.getElementById("papSubmitBtn").innerText = "Add Step";
     editingPapId = null;
 }
 
 // 6. पेज लोड झाल्यावर डेटा लोड करणे
 document.addEventListener("DOMContentLoaded", loadPapSteps);
-
-
-

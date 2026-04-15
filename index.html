@@ -174,10 +174,7 @@
     <div class="form">
         <input type="text" id="papTitle" placeholder="Step Title (e.g. Admission Fees)">
         <textarea id="papDescription" placeholder="Step Description" style="flex: 2; padding: 10px; border-radius: 5px; border: 1px solid #ccc;"></textarea>
-        <select id="papStatus">
-            <option value="normal">Normal Step</option>
-            <option value="danger">Danger Step (Red)</option>
-        </select>
+        
         <button id="papSubmitBtn" onclick="addPapStep()">Add Step</button>
     </div>
 
@@ -186,7 +183,6 @@
             <tr>
                 <th>Title</th>
                 <th>Description</th>
-                <th>Type</th>
                 <th>Action</th>
             </tr>
         </thead>

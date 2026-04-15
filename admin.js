@@ -785,15 +785,13 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-//========================
-//PAP POLICY
-//========================
-
+// ===============================
+// PAP POLICY SECTION ADMIN JS
+// ===============================
 const PAP_API = `${BASE_URL}/api/pap-steps`;
-
 let editingPapId = null;
 
-// FETCH & DISPLAY TABLE
+// 1. डेटा लोड करून टेबलमध्ये दाखवणे
 async function loadPapSteps() {
     const tableBody = document.getElementById("papTable");
     if (!tableBody) return;
@@ -801,40 +799,46 @@ async function loadPapSteps() {
     try {
         const res = await fetch(PAP_API);
         const data = await res.json();
+        
         tableBody.innerHTML = ""; 
 
-        if (!data || data.length === 0) {
-            tableBody.innerHTML = "<tr><td colspan='4' style='text-align:center;'>No data found.</td></tr>";
+        if (!data || data.length === 0 || data.error) {
+            tableBody.innerHTML = "<tr><td colspan='4' style='text-align:center;'>No PAP steps found.</td></tr>";
             return;
         }
 
         data.forEach(step => {
             const row = document.createElement("tr");
+            row.dataset.id = step.id;
             row.innerHTML = `
                 <td><strong>${step.title}</strong></td>
                 <td>${step.description}</td>
-                <td><span class="badge ${step.status}">${step.status}</span></td>
+                <td><span class="badge ${step.status}">${step.status.toUpperCase()}</span></td>
                 <td>
-                    <button class="action-btn edit" onclick="prepareEdit('${step.id}', this)">Edit</button>
-                    <button class="action-btn delete" onclick="deleteStep('${step.id}')">Delete</button>
+                    <button class="action-btn edit" onclick="editPapStep(this)" style="background:#ffc107; border:none; padding:5px 10px; cursor:pointer; border-radius:4px; margin-right:5px;">Edit</button>
+                    <button class="action-btn delete" onclick="deletePapStep('${step.id}')" style="background:#dc3545; color:#fff; border:none; padding:5px 10px; cursor:pointer; border-radius:4px;">Delete</button>
                 </td>
             `;
             tableBody.appendChild(row);
         });
     } catch (err) {
-        console.error("Load Error:", err);
+        console.error("PAP Load Error:", err);
     }
 }
 
-// ADD OR UPDATE
+// 2. नवीन स्टेप ॲड किंवा अपडेट करणे
 async function addPapStep() {
-    const title = document.getElementById("papTitle").value.trim();
-    const description = document.getElementById("papDescription").value.trim();
-    const status = document.getElementById("papStatus").value;
+    const titleInput = document.getElementById("papTitle");
+    const descInput = document.getElementById("papDescription");
+    const statusInput = document.getElementById("papStatus");
     const submitBtn = document.getElementById("papSubmitBtn");
 
+    const title = titleInput.value.trim();
+    const description = descInput.value.trim();
+    const status = statusInput.value;
+
     if (!title || !description) {
-        alert("Fields cannot be empty!");
+        alert("Please fill in both Title and Description!");
         return;
     }
 
@@ -842,49 +846,74 @@ async function addPapStep() {
 
     try {
         submitBtn.disabled = true;
-        let url = editingPapId ? `${PAP_API}/${editingPapId}` : PAP_API;
-        let method = editingPapId ? "PUT" : "POST";
+        submitBtn.innerText = "Processing...";
 
-        const response = await fetch(url, {
-            method: method,
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
-        });
+        let response;
+        if (editingPapId) {
+            // UPDATE (PUT)
+            response = await fetch(`${PAP_API}/${editingPapId}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+        } else {
+            // CREATE (POST)
+            response = await fetch(PAP_API, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+        }
 
         if (response.ok) {
-            alert(editingPapId ? "Updated! ✅" : "Added! ✅");
+            alert(editingPapId ? "Step Updated! ✅" : "New Step Added! ✅");
             resetPapForm();
             loadPapSteps();
         } else {
-            alert("Failed to save. Check Vercel Logs.");
+            const errData = await response.json();
+            alert("Error: " + (errData.error || "Failed to save"));
         }
     } catch (error) {
-        alert("Network Error. Check your internet or API URL.");
+        console.error("PAP Save Error:", error);
+        alert("Server Connection Failed!");
     } finally {
         submitBtn.disabled = false;
     }
 }
 
-// PREPARE FOR EDIT
-function prepareEdit(id, btn) {
-    editingPapId = id;
+// 3. एडिट करण्यासाठी फॉर्ममध्ये डेटा भरणे
+function editPapStep(btn) {
     const row = btn.closest("tr");
+    editingPapId = row.dataset.id;
+
     document.getElementById("papTitle").value = row.cells[0].innerText;
     document.getElementById("papDescription").value = row.cells[1].innerText;
-    document.getElementById("papStatus").value = row.cells[2].innerText.trim().toLowerCase();
+    
+    // Status badge मधून व्हॅल्यू सेट करणे
+    const currentStatus = row.cells[2].innerText.toLowerCase();
+    document.getElementById("papStatus").value = currentStatus;
+
     document.getElementById("papSubmitBtn").innerText = "Update Step";
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// DELETE
-async function deleteStep(id) {
-    if (!confirm("Delete this?")) return;
+// 4. स्टेप डिलीट करणे
+async function deletePapStep(id) {
+    if (!confirm("Are you sure you want to delete this policy step?")) return;
+
     try {
         const res = await fetch(`${PAP_API}/${id}`, { method: "DELETE" });
-        if (res.ok) { loadPapSteps(); }
-    } catch (err) { alert("Delete failed."); }
+        if (res.ok) {
+            loadPapSteps();
+        } else {
+            alert("Delete failed. Please try again.");
+        }
+    } catch (err) {
+        console.error("Delete Error:", err);
+    }
 }
 
+// 5. फॉर्म रिसेट करणे
 function resetPapForm() {
     document.getElementById("papTitle").value = "";
     document.getElementById("papDescription").value = "";
@@ -893,4 +922,8 @@ function resetPapForm() {
     editingPapId = null;
 }
 
+// 6. पेज लोड झाल्यावर डेटा लोड करणे
 document.addEventListener("DOMContentLoaded", loadPapSteps);
+
+
+

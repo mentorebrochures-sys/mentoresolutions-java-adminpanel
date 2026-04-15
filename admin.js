@@ -784,3 +784,126 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
+
+// Global variable to track if we are editing or adding new
+let editingPapId = null;
+const PAP_API = `${BASE_URL}/api/pap-steps`;
+
+/**
+ * 1. FUNCTION TO ADD OR UPDATE DATA
+ * This runs when you click the "Add Step" button
+ */
+async function addPapStep() {
+    // Get input elements
+    const titleInput = document.getElementById("papTitle");
+    const descInput = document.getElementById("papDescription");
+    const statusInput = document.getElementById("papStatus");
+    const submitBtn = document.getElementById("papSubmitBtn");
+
+    // Get actual values
+    const title = titleInput.value.trim();
+    const description = descInput.value.trim();
+    const status = statusInput.value;
+
+    // Validation: Don't allow empty fields
+    if (!title || !description) {
+        alert("Please fill in all fields before adding.");
+        return;
+    }
+
+    // Create the data object to send to backend
+    const payload = { title, description, status };
+
+    try {
+        submitBtn.disabled = true;
+        submitBtn.innerText = "Processing...";
+
+        let response;
+        
+        if (editingPapId) {
+            // IF EDITING: Send PUT request
+            response = await fetch(`${PAP_API}/${editingPapId}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+        } else {
+            // IF ADDING NEW: Send POST request
+            response = await fetch(PAP_API, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+        }
+
+        if (response.ok) {
+            // SUCCESS MESSAGE
+            alert(editingPapId ? "Step Updated Successfully! ✅" : "New Step Added to Table! ✅");
+            
+            // Clear inputs for next entry
+            titleInput.value = "";
+            descInput.value = "";
+            statusInput.value = "normal";
+            editingPapId = null;
+            submitBtn.innerText = "Add Step";
+
+            // Refresh the table to show new data
+            loadPapSteps();
+        } else {
+            alert("Failed to save data. Please check your backend.");
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        alert("Connection Error. Is your server running?");
+    } finally {
+        submitBtn.disabled = false;
+    }
+}
+
+/**
+ * 2. FUNCTION TO REFRESH THE TABLE
+ * Fetches latest data from database and draws the rows
+ */
+async function loadPapSteps() {
+    const tableBody = document.getElementById("papTable");
+    
+    try {
+        const res = await fetch(PAP_API);
+        const data = await res.json();
+
+        tableBody.innerHTML = ""; // Clear existing rows
+
+        data.forEach(step => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td><strong>${step.title}</strong></td>
+                <td>${step.description}</td>
+                <td><span class="badge ${step.status}">${step.status}</span></td>
+                <td>
+                    <button class="action-btn edit" onclick="prepareEdit('${step.id}', this)">Edit</button>
+                    <button class="action-btn delete" onclick="deleteStep('${step.id}')">Delete</button>
+                </td>
+            `;
+            tableBody.appendChild(row);
+        });
+    } catch (err) {
+        tableBody.innerHTML = "<tr><td colspan='4'>Error loading data...</td></tr>";
+    }
+}
+
+/**
+ * 3. PREPARE EDIT
+ * Moves data from the table back into the inputs
+ */
+function prepareEdit(id, btn) {
+    editingPapId = id;
+    const row = btn.closest("tr");
+    
+    document.getElementById("papTitle").value = row.cells[0].innerText;
+    document.getElementById("papDescription").value = row.cells[1].innerText;
+    document.getElementById("papSubmitBtn").innerText = "Update Step";
+    
+    // Smooth scroll back to form
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+

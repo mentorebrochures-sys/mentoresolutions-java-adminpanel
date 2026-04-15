@@ -34,6 +34,7 @@
       <li onclick="showPanel('javaCourses', this)"><i class="fa fa-book"></i> New batch</li>
       <li onclick="showPanel('placements', this)"><i class="fa fa-user-graduate"></i> Placements</li>
       <li onclick="showPanel('training', this)"><i class="fa fa-chalkboard"></i> Training</li>
+      <li onclick="showPanel('pap', this)"><i class="fa fa-file-invoice"></i> PAP Policy</li>
       <li onclick="showPanel('contact', this)"><i class="fa fa-envelope"></i> Contact</li>
       <li class="logout"><i class="fa fa-sign-out-alt"></i> Logout</li>
     </ul>
@@ -166,6 +167,33 @@
       <!-- Contact Cards Container -->
       <div id="contactTable" class="contact-cards"></div>
     </section>
+
+    <section id="pap" class="panel">
+    <h2>Manage PAP Policy Steps</h2>
+
+    <div class="form">
+        <input type="text" id="papTitle" placeholder="Step Title (e.g. Admission Fees)">
+        <textarea id="papDescription" placeholder="Step Description" style="flex: 2; padding: 10px; border-radius: 5px; border: 1px solid #ccc;"></textarea>
+        <select id="papStatus">
+            <option value="normal">Normal Step</option>
+            <option value="danger">Danger Step (Red)</option>
+        </select>
+        <button id="papSubmitBtn" onclick="addPapStep()">Add Step</button>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Type</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="papTable">
+            </tbody>
+    </table>
+</section>
 
   </main>
   <script src="admin.js"></script>

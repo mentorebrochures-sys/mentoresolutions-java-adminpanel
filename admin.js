@@ -785,81 +785,15 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-// 1. GLOBAL VARIABLES
-let editingPapId = null;
+//========================
+//PAP POLICY
+//========================
+
 const PAP_API = `${BASE_URL}/api/pap-steps`;
 
-/**
- * 2. CREATE & UPDATE (ADD/EDIT)
- * Runs when the "Add Step" button is clicked
- */
-async function addPapStep() {
-    const titleInput = document.getElementById("papTitle");
-    const descInput = document.getElementById("papDescription");
-    const statusInput = document.getElementById("papStatus");
-    const submitBtn = document.getElementById("papSubmitBtn");
+let editingPapId = null;
 
-    const title = titleInput.value.trim();
-    const description = descInput.value.trim();
-    const status = statusInput.value;
-
-    // Validation
-    if (!title || !description) {
-        alert("Please fill in all fields before proceeding!");
-        return;
-    }
-
-    const payload = { title, description, status };
-
-    try {
-        submitBtn.disabled = true;
-        submitBtn.innerText = "Processing...";
-
-        let response;
-        if (editingPapId) {
-            // EDIT MODE: Send PUT Request
-            response = await fetch(`${PAP_API}/${editingPapId}`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload)
-            });
-        } else {
-            // ADD MODE: Send POST Request
-            response = await fetch(PAP_API, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload)
-            });
-        }
-
-        if (response.ok) {
-            // English Success Messages
-            alert(editingPapId ? "Step updated successfully! ✅" : "New step added successfully! ✅");
-            
-            // Reset Form
-            titleInput.value = "";
-            descInput.value = "";
-            statusInput.value = "normal";
-            editingPapId = null;
-            submitBtn.innerText = "Add Step";
-
-            // Refresh Table
-            loadPapSteps();
-        } else {
-            alert("Server Error: Could not save data.");
-        }
-    } catch (error) {
-        console.error("Error:", error);
-        alert("Connection Error! Please check if your server is running.");
-    } finally {
-        submitBtn.disabled = false;
-    }
-}
-
-/**
- * 3. READ (FETCH DATA)
- * Displays data from database into the table
- */
+// FETCH & DISPLAY TABLE
 async function loadPapSteps() {
     const tableBody = document.getElementById("papTable");
     if (!tableBody) return;
@@ -867,11 +801,10 @@ async function loadPapSteps() {
     try {
         const res = await fetch(PAP_API);
         const data = await res.json();
+        tableBody.innerHTML = ""; 
 
-        tableBody.innerHTML = ""; // Clear existing rows
-
-        if (data.length === 0) {
-            tableBody.innerHTML = "<tr><td colspan='4' style='text-align:center;'>No data available in the table.</td></tr>";
+        if (!data || data.length === 0) {
+            tableBody.innerHTML = "<tr><td colspan='4' style='text-align:center;'>No data found.</td></tr>";
             return;
         }
 
@@ -882,68 +815,82 @@ async function loadPapSteps() {
                 <td>${step.description}</td>
                 <td><span class="badge ${step.status}">${step.status}</span></td>
                 <td>
-                    <button class="action-btn edit" onclick="prepareEdit('${step.id}', this)">
-                        <i class="fa fa-edit"></i> Edit
-                    </button>
-                    <button class="action-btn delete" onclick="deleteStep('${step.id}')">
-                        <i class="fa fa-trash"></i> Delete
-                    </button>
+                    <button class="action-btn edit" onclick="prepareEdit('${step.id}', this)">Edit</button>
+                    <button class="action-btn delete" onclick="deleteStep('${step.id}')">Delete</button>
                 </td>
             `;
             tableBody.appendChild(row);
         });
     } catch (err) {
         console.error("Load Error:", err);
-        tableBody.innerHTML = "<tr><td colspan='4' style='color:red; text-align:center;'>Error: Could not load data.</td></tr>";
     }
 }
 
-/**
- * 4. PREPARE EDIT
- * Pulls data from the table row back into the input fields
- */
-function prepareEdit(id, btn) {
-    editingPapId = id;
-    const row = btn.closest("tr");
-    
-    document.getElementById("papTitle").value = row.cells[0].innerText;
-    document.getElementById("papDescription").value = row.cells[1].innerText;
-    
-    // Select the correct status in dropdown
-    const currentStatus = row.cells[2].innerText.trim().toLowerCase();
-    document.getElementById("papStatus").value = currentStatus;
+// ADD OR UPDATE
+async function addPapStep() {
+    const title = document.getElementById("papTitle").value.trim();
+    const description = document.getElementById("papDescription").value.trim();
+    const status = document.getElementById("papStatus").value;
+    const submitBtn = document.getElementById("papSubmitBtn");
 
-    document.getElementById("papSubmitBtn").innerText = "Update Step";
-    
-    // Smooth scroll back to the top form
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-}
+    if (!title || !description) {
+        alert("Fields cannot be empty!");
+        return;
+    }
 
-/**
- * 5. DELETE
- * Deletes a step from the database
- */
-async function deleteStep(id) {
-    if (!confirm("Are you sure? This step will be permanently deleted.")) return;
+    const payload = { title, description, status };
 
     try {
-        const response = await fetch(`${PAP_API}/${id}`, {
-            method: "DELETE"
+        submitBtn.disabled = true;
+        let url = editingPapId ? `${PAP_API}/${editingPapId}` : PAP_API;
+        let method = editingPapId ? "PUT" : "POST";
+
+        const response = await fetch(url, {
+            method: method,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
         });
 
         if (response.ok) {
-            alert("Step deleted successfully! 🗑️");
-            loadPapSteps(); // Refresh UI
+            alert(editingPapId ? "Updated! ✅" : "Added! ✅");
+            resetPapForm();
+            loadPapSteps();
         } else {
-            alert("Delete action failed.");
+            alert("Failed to save. Check Vercel Logs.");
         }
     } catch (error) {
-        console.error("Delete Error:", error);
-        alert("Server connection failed.");
+        alert("Network Error. Check your internet or API URL.");
+    } finally {
+        submitBtn.disabled = false;
     }
 }
 
-// Initial load when page opens
-document.addEventListener("DOMContentLoaded", () => {
-    loadPapSteps();
-});
+// PREPARE FOR EDIT
+function prepareEdit(id, btn) {
+    editingPapId = id;
+    const row = btn.closest("tr");
+    document.getElementById("papTitle").value = row.cells[0].innerText;
+    document.getElementById("papDescription").value = row.cells[1].innerText;
+    document.getElementById("papStatus").value = row.cells[2].innerText.trim().toLowerCase();
+    document.getElementById("papSubmitBtn").innerText = "Update Step";
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// DELETE
+async function deleteStep(id) {
+    if (!confirm("Delete this?")) return;
+    try {
+        const res = await fetch(`${PAP_API}/${id}`, { method: "DELETE" });
+        if (res.ok) { loadPapSteps(); }
+    } catch (err) { alert("Delete failed."); }
+}
+
+function resetPapForm() {
+    document.getElementById("papTitle").value = "";
+    document.getElementById("papDescription").value = "";
+    document.getElementById("papStatus").value = "normal";
+    document.getElementById("papSubmitBtn").innerText = "Add Step";
+    editingPapId = null;
+}
+
+document.addEventListener("DOMContentLoaded", loadPapSteps);
